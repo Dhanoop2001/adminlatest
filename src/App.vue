@@ -7,10 +7,14 @@
      <LogIn />
      <AdminPanel />
      <ParlourService />
+     <AppointmentPage />
+     <ClientPage />
   </div>
 </template>
 
 <script>
+
+
 
 
 export default {

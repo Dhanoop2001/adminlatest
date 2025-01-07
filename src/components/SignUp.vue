@@ -49,8 +49,8 @@
         <label for="gender">Gender</label>
         <select id="gender" v-model="gender" required>
           <option value="" disabled>Select your gender</option>
-          <option value="male">Men</option>
-          <option value="female">Women</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
         </select>
       </div>
       <div class="form-group">
@@ -67,17 +67,18 @@
       </div>
     </form>
 
-    <!-- Registration Success Popup -->
-    <div v-if="showSuccessPopup" class="success-popup">
-      <p>Registration Successful!</p>
-      <button @click="closePopup">OK</button>
+    <!-- Overlay and Popup -->
+    <div v-if="showSuccessPopup">
+      <div class="blur-overlay"></div>
+      <div class="success-popup">
+        <p>Registration Successful!</p>
+        <button @click="closePopup">OK</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: "SignUpPage",
   data() {
@@ -121,28 +122,35 @@ export default {
       this.isPasswordVisible = !this.isPasswordVisible;
     },
     async handleSignUp() {
-      this.validateName(); // Ensure name is validated
-      this.validatePassword(); // Ensure password is validated
+      this.validateName();
+      this.validatePassword();
 
       if (!this.errors.name && !this.errors.password && this.email && this.gender) {
-        this.isSubmitting = true; // Disable the button
+        this.isSubmitting = true;
+
         try {
-          // Sending user data to backend API
-          const response = await axios.post('http://localhost:8080/api/register', {
+          /* 
+          // Uncomment this block when backend is available
+          const response = await axios.post("http://localhost:8080/api/register", {
             name: this.name,
             email: this.email,
             password: this.password,
-            gender: this.gender
+            gender: this.gender,
           });
 
           if (response.status === 200) {
             this.showSuccessPopup = true;
-            this.isSubmitting = false; // Re-enable the button
           }
+          */
+
+          // Simulated success response
+          console.log("Simulating successful registration.");
+          this.showSuccessPopup = true;
         } catch (error) {
-          console.error('Registration failed', error);
+          console.error("Registration failed", error);
           alert("An error occurred during registration. Please try again.");
-          this.isSubmitting = false; // Re-enable the button
+        } finally {
+          this.isSubmitting = false;
         }
       } else {
         alert("Please fill out all fields correctly.");
@@ -157,37 +165,34 @@ export default {
 </script>
 
 <style scoped>
-/* Container styles */
 .signup-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url('@/assets/salon.jpg');
+  background-image: url('@/assets/goldbg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-/* Heading styles */
 .signup-heading {
   font-size: 3rem;
   color: #fff;
   margin-bottom: 1.5rem;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
-/* Form styles */
 .signup-form {
   padding: 2.5rem;
   border-radius: 12px;
-  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
   width: 90%;
   max-width: 450px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: solid 1px green;
+  border: solid 1px gold;
 }
 
 .signup-form:hover {
@@ -198,35 +203,34 @@ export default {
   margin-bottom: 1.5rem;
 }
 
-/* Label and Input styles */
 label {
   display: block;
   margin-bottom: 0.75rem;
   font-weight: 600;
   color: #ddd;
   font-size: 1.1rem;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 input, select {
   width: 100%;
   padding: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   font-size: 1rem;
-  background-color: #555;
+  background-color: black;
   color: #fff;
   box-sizing: border-box;
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 input:focus, select:focus {
-  background-color: #666;
+  background-color: black;
   outline: none;
-  border: 2px solid #66bb6a;
+  border: 2px solid gold;
+  border-radius: 30px;
 }
 
-/* Password container styles */
 .password-container {
   position: relative;
 }
@@ -238,20 +242,19 @@ input:focus, select:focus {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgb(24, 204, 24);
+  color: gold;
   font-size: 0.8rem;
   cursor: pointer;
   text-decoration: underline;
 }
 
-/* Button styles */
 .signup-button {
   width: 100%;
   padding: 1rem;
-  background-color: #66bb6a;
+  background-color: black;
   color: #fff;
-  border: none;
-  border-radius: 8px;
+  border: 1px solid gold;
+  border-radius: 30px;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
@@ -259,12 +262,13 @@ input:focus, select:focus {
 }
 
 .signup-button:hover {
-  background-color: #4caf50;
+  background-color: black;
   transform: translateY(-2px);
+  border: 1px solid gold;
 }
 
 .signup-button:active {
-  background-color: #388e3c;
+  background-color: gold;
   transform: translateY(1px);
 }
 
@@ -273,7 +277,6 @@ input:focus, select:focus {
   cursor: not-allowed;
 }
 
-/* Already have account text styles */
 .already-account {
   text-align: center;
   font-size: 1rem;
@@ -291,41 +294,62 @@ input:focus, select:focus {
   text-decoration: underline;
 }
 
-/* Popup styles */
 .success-popup {
   position: fixed;
+  height: 200px;
+  width: 400px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #fff;
+  background: black;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
   text-align: center;
   z-index: 1000;
+  border: 2px solid gold;
 }
 
 .success-popup p {
-  font-size: 1.2rem;
-  color: #333;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: white;
+  margin-top: 2rem;
+  font-weight: bold;
 }
 
 .success-popup button {
-  padding: 0.5rem 1.5rem;
-  background-color: #66bb6a;
-  color: #fff;
+  padding: 0.9rem 1.7rem;
+  background-color: gold;
+  color: black;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+  margin-top: 30px;
 }
 
 .success-popup button:hover {
-  background-color: #4caf50;
+  background-color: #ffd700; /* Slightly lighter gold */
+  transform: translateY(-2px);
 }
 
-/* Error message styles */
+.success-popup button:active {
+  background-color: #daa520; /* Darker gold */
+  transform: translateY(1px);
+}
+
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  z-index: 999; /* Ensure it's above other content */
+}
+
 .error-message {
   color: #ff4d4f;
   font-size: 0.9rem;

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios'; // Uncomment this if using the backend
 
 export default {
   name: "AdminLogIn",
@@ -63,6 +63,8 @@ export default {
     },
     async handleLogin() {
       try {
+        /* 
+        // Uncomment this block when backend is available
         const response = await axios.post('http://localhost:5000/api/login', {
           email: this.email,
           password: this.password,
@@ -70,10 +72,16 @@ export default {
 
         const { token } = response.data;
         localStorage.setItem('token', token); // Store JWT token
+        */
 
-        this.$router.push('/adminpanel'); // Redirect to admin panel
+        // Simulated success
+        console.log("Simulating successful login.");
+        localStorage.setItem('token', 'fake-token'); // Simulated token storage
+
+        this.$router.push('/admin-panel'); // Redirect to admin panel
       } catch (error) {
-        alert(error.response.data.message); // Show error message
+        alert("An error occurred during login. Please try again."); // Simulated error
+        // alert(error.response.data.message); // Use this with backend
       }
     },
   },
@@ -87,7 +95,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url("@/assets/salon.jpg");
+  background-image: url("@/assets/goldbg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -102,7 +110,7 @@ export default {
 }
 
 .login-form {
-  border: 1px solid green;
+  border: 1px solid gold;
   padding: 2.5rem;
   border-radius: 12px;
   box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
@@ -132,19 +140,26 @@ input {
   width: 100%;
   padding: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   font-size: 1rem;
-  background-color: #555;
+  background-color: black;
   color: #fff;
   box-sizing: border-box;
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 input:focus {
-  background-color: #666;
+  background-color: black;
   outline: none;
-  border: 2px solid #66bb6a;
+  border: 2px solid gold;
+  border-radius: 30px;
 }
+
+input:valid {
+  background-color: black;
+  color: white;
+}
+
 
 .password-container {
   position: relative;
@@ -157,7 +172,7 @@ input:focus {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgb(24, 204, 24);
+  color: gold;
   font-size: 0.8rem;
   cursor: pointer;
 }
@@ -165,10 +180,11 @@ input:focus {
 .login-button {
   width: 100%;
   padding: 1rem;
-  background-color: #66bb6a;
+  background-color: black;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border: 2px solid gold;
+  border-radius: 30px;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
@@ -176,13 +192,14 @@ input:focus {
 }
 
 .login-button:hover {
-  background-color: #4caf50;
+  background-color: black;
   transform: translateY(-2px);
 }
 
 .login-button:active {
-  background-color: #388e3c;
+  background-color: black;
   transform: translateY(1px);
+  border: 1px solid gold;
 }
 
 .already-account {

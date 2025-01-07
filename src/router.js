@@ -23,11 +23,19 @@ const routes = [
             name: 'ParlourService',
               component: () => import('@/components/ParlourService.vue') 
              },
-             { path: '/dashboard', 
-              name: 'DashBoard',
-                component: () => import('@/components/DashBoard.vue') 
+             { path: '/appointments', 
+              name: 'AppointmentPage',
+                component: () => import('@/components/AppointmentPage.vue') 
                },
-         
+               { path: '/staff', 
+                name: 'ManageStaff',
+                  component: () => import('@/components/ManageStaff.vue') 
+                 },
+                 { path: '/clients', 
+                  name: 'ClientPage',
+                   component: () => import('@/components/ClientPage.vue') 
+                  },
+                  
        
 ];
 

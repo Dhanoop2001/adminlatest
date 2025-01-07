@@ -1,5 +1,11 @@
 <template>
   <div class="home-page">
+    <!-- Logo and Website Name Section -->
+    <div class="logo-container">
+      <img src="@/assets/spalogo.png" alt="Spa Logo" class="spa-logo" />
+      <span class="website-name">Salon Info</span>
+    </div>
+
     <div class="blue-box">
       <h1>Welcome, Admin</h1>
       <div class="button-container">
@@ -83,6 +89,29 @@ export default {
   z-index: -1;
 }
 
+.logo-container {
+  position: absolute;
+  top: 1rem; /* Adjust top spacing */
+  left: 1rem; /* Adjust left spacing */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Spacing between logo and website name */
+}
+
+.spa-logo {
+  width: 100px; /* Adjust size of logo */
+  height: auto;
+}
+
+.website-name {
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(180deg, gold, white);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none; /* Remove text-shadow to let the gradient shine */
+}
+
 h1 {
   font-size: 3rem;
   margin-bottom: 2rem;
@@ -106,7 +135,7 @@ h1 {
 
 .btn:hover {
   background-color: black;
-  color: white;
+  color: gold;
 }
 
 .signup-btn {
@@ -120,7 +149,7 @@ h1 {
 }
 
 .blue-box {
-  background-color: #5e8fc469;
+  background-color: rgba(0, 0, 0, 0.534);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -144,11 +173,11 @@ h1 {
 }
 
 .ripple-signup {
-  background-color: rgba(105, 154, 247, 0.5); /* Green for signup */
+  background-color: rgba(34, 34, 32, 0.521);
 }
 
 .ripple-login {
-  background-color: rgba(105, 154, 247, 0.5); /* Green for signup */
+  background-color: rgba(34, 34, 32, 0.521);
 }
 
 @keyframes rippleEffect {
