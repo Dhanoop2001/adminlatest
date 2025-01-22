@@ -1,61 +1,58 @@
-// store.js
-import { createStore } from 'vuex';
-import axios from 'axios';
+import { createStore } from "vuex";
+import axios from "axios";
 
 // Configure Axios with the base URL for the backend
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api', // Replace with your Spring Boot backend's base URL
+  baseURL: "http://192.168.1.41:8080", // Replace with your Spring Boot backend's base URL
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-export default createStore({
+const store = createStore({
   state: {
     user: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     isAuthenticated: false,
+    token: null, // Store the authentication token
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
-      state.isAuthenticated = !!user.email; // Set authentication status
+      state.isAuthenticated = !!user.email;
+      state.token = user.token || null; // Set token if available
     },
     logoutUser(state) {
-      state.user = { email: '', password: '' };
+      state.user = { email: "", password: "" };
       state.isAuthenticated = false;
+      state.token = null; // Clear token on logout
     },
   },
   actions: {
-    async signupUser({ commit }, user) {
-      try {
-        const response = await apiClient.post('/signup', user);
-        commit('setUser', response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Error during signup:', error);
-        throw error;
-      }
-    },
     async loginUser({ commit }, user) {
       try {
-        const response = await apiClient.post('/login', user);
-        commit('setUser', response.data);
-        return response.data;
+        const response = await apiClient.post("/admin/login", user);
+        // Assuming the backend returns the user object with a token
+        const userData = response.data;
+        commit("setUser", userData);
+        return userData;
       } catch (error) {
-        console.error('Error during login:', error);
+        console.error("Error during login:", error);
         throw error;
       }
     },
     logoutUser({ commit }) {
-      commit('logoutUser');
+      commit("logoutUser");
     },
   },
   getters: {
     getUserEmail: (state) => state.user.email,
     getUserPassword: (state) => state.user.password,
     isAuthenticated: (state) => state.isAuthenticated,
+    getAuthToken: (state) => state.token,
   },
 });
+
+export default store;

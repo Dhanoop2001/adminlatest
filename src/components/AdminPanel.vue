@@ -33,7 +33,6 @@
     <div class="main-content">
       <div class="cards-container">
         <div class="card" v-for="card in cards" :key="card.title">
-          <img :src="card.img" alt="Card image" class="card-img" />
           <h3 class="card-title">{{ card.title }}</h3>
           <div class="card-actions">
             <button class="manage-btn" @click="manage(card.route)">
@@ -53,24 +52,12 @@ export default {
       drawer: false,
       menuItems: [
         { title: "Dashboard", icon: "🏠", route: "/dashboard" },
-        { title: "Clients", icon: "👤", route: "/clients" },
+        
       ],
       cards: [
-        {
-          title: "Manage Services",
-          img: "https://via.placeholder.com/200",
-          route: "/services",
-        },
-        {
-          title: "Manage Staff",
-          img: "https://via.placeholder.com/200",
-          route: "/staff",
-        },
-        {
-          title: "Appointments",
-          img: "https://via.placeholder.com/200",
-          route: "/appointments",
-        },
+        { title: "Offers", route: "admin-offers" },
+        { title: "Category", route: "/admin-category" },
+        { title: "Parlours", route: "/admin-parlours" },
       ],
     };
   },
@@ -105,13 +92,13 @@ export default {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.527); /* Light black overlay */
-  z-index: 0; /* Make sure overlay is behind the content */
+  z-index: 0; /* Ensure overlay is behind content */
 }
 
 .header,
 .sidebar,
 .main-content {
-  z-index: 1; /* Ensure content is above the overlay */
+  z-index: 1; /* Ensure content is above overlay */
 }
 
 .sidebar {
@@ -191,7 +178,7 @@ export default {
   margin-bottom: 800px;
 }
 
-.logout-btn:hover{
+.logout-btn:hover {
   color: gold;
   border: 1px solid gold;
 }
@@ -244,6 +231,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
+  margin-top: 330px;
 }
 
 .card {
@@ -255,6 +243,7 @@ export default {
   color: black;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 20px;
 }
 
 .card:hover {
@@ -262,17 +251,10 @@ export default {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-.card-img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-bottom: 2px solid gold;
-}
-
 .card-title {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  margin: 10px 0;
+  margin: 20px 0;
   color: black;
 }
 
@@ -300,3 +282,4 @@ export default {
   transform: scale(1.1);
 }
 </style>
+

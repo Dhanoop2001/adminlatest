@@ -2,19 +2,19 @@
   <div class="home-page">
     <!-- Logo and Website Name Section -->
     <div class="logo-container">
-      <img src="@/assets/spalogo.png" alt="Spa Logo" class="spa-logo" />
+      <img :src="require('@/assets/spalogo.png')" alt="Spa Logo" class="spa-logo" />
       <span class="website-name">Salon Info</span>
     </div>
 
     <div class="blue-box">
       <h1>Welcome, Admin</h1>
       <div class="button-container">
-        <button 
+        <!-- <button 
           class="btn signup-btn" 
           @click="triggerRipple('signup')"
         >
           SIGN UP
-        </button>
+        </button> -->
         <button 
           class="btn login-btn" 
           @click="triggerRipple('login')"
@@ -91,15 +91,15 @@ export default {
 
 .logo-container {
   position: absolute;
-  top: 1rem; /* Adjust top spacing */
-  left: 1rem; /* Adjust left spacing */
+  top: 1rem;
+  left: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Spacing between logo and website name */
+  gap: 0.5rem;
 }
 
 .spa-logo {
-  width: 100px; /* Adjust size of logo */
+  width: 100px;
   height: auto;
 }
 
@@ -109,7 +109,7 @@ export default {
   background: linear-gradient(180deg, gold, white);
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: none; /* Remove text-shadow to let the gradient shine */
+  text-shadow: none;
 }
 
 h1 {

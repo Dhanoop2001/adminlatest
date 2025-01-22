@@ -7,10 +7,10 @@ const routes = [
     name: 'HomePage',
      component: () => import('@/components/HomePage.vue') 
     },
-    { path: '/sign-up', 
-      name: 'SignUp',
-        component: () => import('@/components/SignUp.vue') 
-       },
+    // { path: '/sign-up', 
+    //   name: 'SignUp',
+    //     component: () => import('@/components/SignUp.vue') 
+    //    },
        { path: '/log-in', 
         name: 'LogIn',
           component: () => import('@/components/LogIn.vue') 
@@ -19,23 +19,48 @@ const routes = [
           name: 'AdminPanel',
             component: () => import('@/components/AdminPanel.vue') 
            },
-           { path: '/services', 
-            name: 'ParlourService',
-              component: () => import('@/components/ParlourService.vue') 
+          //  { path: '/services', 
+          //   name: 'ParlourService',
+          //     component: () => import('@/components/ParlourService.vue') 
+          //    },
+          //    { path: '/appointments', 
+          //     name: 'AppointmentPage',
+          //       component: () => import('@/components/AppointmentPage.vue') 
+          //      },
+          //      { path: '/staff', 
+          //       name: 'ManageStaff',
+          //         component: () => import('@/components/ManageStaff.vue') 
+          //        },
+          //        { path: '/clients', 
+          //         name: 'ClientPage',
+          //          component: () => import('@/components/ClientPage.vue') 
+          //         },
+          { path: '/admin-parlours', 
+            name: 'AdminParlours',
+              component: () => import('@/components/AdminParlours.vue') 
              },
-             { path: '/appointments', 
-              name: 'AppointmentPage',
-                component: () => import('@/components/AppointmentPage.vue') 
-               },
-               { path: '/staff', 
-                name: 'ManageStaff',
-                  component: () => import('@/components/ManageStaff.vue') 
-                 },
-                 { path: '/clients', 
-                  name: 'ClientPage',
-                   component: () => import('@/components/ClientPage.vue') 
-                  },
-                  
+             { path: '/admin-category', 
+              name: 'AdminCategory',
+                component: () => import('@/components/AdminCategory.vue') 
+               }, 
+               { path: '/admin-offers', 
+                name: 'AdminOffers',
+                  component: () => import('@/components/AdminOffers.vue') 
+                 }, 
+                 { path: '/admin-overview', 
+                  name: 'AdminOverview',
+                    component: () => import('@/components/AdminOverview.vue') 
+                   },
+                   { path: '/doughnut', 
+                    name: 'DoughnutChart',
+                      component: () => import('@/components/DoughnutChart.vue') 
+                     },
+                     { path: '/', 
+                      name: 'DoughnutChart',
+                        component: () => import('@/components/DoughnutChart.vue') 
+                       },  
+               
+             
        
 ];
 

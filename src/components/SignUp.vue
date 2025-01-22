@@ -1,5 +1,14 @@
-<template>
+<!-- <template>
   <div class="signup-container">
+    <!-- Back Icon -->
+    <div class="back-icon" @click="$router.push('/')"
+      :style="{ pointerEvents: showSuccessPopup ? 'none' : 'auto' }"
+      :class="{ 'disabled': showSuccessPopup }"
+    >
+      <i class="fas fa-arrow-left"></i>
+      <span>&lt;</span>
+    </div>
+
     <h2 class="signup-heading">Sign Up</h2>
     <form class="signup-form" @submit.prevent="handleSignUp">
       <div class="form-group">
@@ -10,6 +19,7 @@
           placeholder="Enter your name"
           v-model="name"
           @blur="validateName"
+          :class="{'error-border': errors.name}"
           required
         />
         <small v-if="errors.name" class="error-message">{{ errors.name }}</small>
@@ -21,6 +31,7 @@
           id="email"
           placeholder="Enter your email"
           v-model="email"
+          :class="{'error-border': errors.email}"
           required
         />
       </div>
@@ -33,6 +44,7 @@
             placeholder="Enter your password"
             v-model="password"
             @blur="validatePassword"
+            :class="{'error-border': errors.password}"
             required
           />
           <button
@@ -67,7 +79,7 @@
       </div>
     </form>
 
-    <!-- Overlay and Popup -->
+    <!-- Success Popup -->
     <div v-if="showSuccessPopup">
       <div class="blur-overlay"></div>
       <div class="success-popup">
@@ -90,6 +102,7 @@ export default {
       gender: "",
       errors: {
         name: "",
+        email: "",
         password: "",
       },
       showSuccessPopup: false,
@@ -129,21 +142,6 @@ export default {
         this.isSubmitting = true;
 
         try {
-          /* 
-          // Uncomment this block when backend is available
-          const response = await axios.post("http://localhost:8080/api/register", {
-            name: this.name,
-            email: this.email,
-            password: this.password,
-            gender: this.gender,
-          });
-
-          if (response.status === 200) {
-            this.showSuccessPopup = true;
-          }
-          */
-
-          // Simulated success response
           console.log("Simulating successful registration.");
           this.showSuccessPopup = true;
         } catch (error) {
@@ -176,6 +174,40 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+.back-icon {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid gold;
+  color: gold;
+  border-radius: 50%;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 1.7rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000; /* Ensure it stays on top of other elements */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.back-icon:hover {
+  transform: scale(1.1);
+}
+
+.back-icon:active {
+  transform: scale(0.95);
+}
+
+.disabled {
+  opacity: 0.0;
+  cursor: not-allowed;
+}
+
 
 .signup-heading {
   font-size: 3rem;
@@ -355,4 +387,8 @@ input:focus, select:focus {
   font-size: 0.9rem;
   margin-top: 0.5rem;
 }
-</style>
+
+.error-border {
+  border: 2px solid red !important;
+}
+</style> -->

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="admin-dashboard">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -303,4 +303,4 @@ export default {
 .close-btn:hover {
   color: gold;
 }
-</style>
+</style> -->

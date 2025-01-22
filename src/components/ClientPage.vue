@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="client-page">
     <div class="overlay">
       <h1>Clients</h1>
@@ -329,4 +329,4 @@ input {
   background-color: black;
   color: gold;
 }
-</style>
+</style> -->

@@ -8,12 +8,21 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@iconscout/unicons": "^4.2.0",
+    "@mdi/font": "5.9.55",
     "axios": "^1.7.9",
+    "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "chart.js": "^4.4.7",
     "core-js": "^3.8.3",
+    "leaflet": "^1.9.4",
+    "roboto-fontface": "*",
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
-    "vuex": "^4.0.2"
+    "vuetify": "^3.0.0-beta.0",
+    "vuex": "^4.0.2",
+    "webfontloader": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -24,7 +33,9 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "sass": "^1.83.0",
-    "sass-loader": "^16.0.4"
+    "sass-loader": "^16.0.4",
+    "vue-cli-plugin-vuetify": "~2.5.8",
+    "webpack-plugin-vuetify": "^2.0.0-alpha.0"
   },
   "eslintConfig": {
     "root": true,

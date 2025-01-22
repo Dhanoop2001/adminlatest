@@ -1,8 +1,8 @@
-<template>
+<!-- <template>
   <div class="services-page">
     <div class="header">
       <h1>Services Management</h1>
-      <button class="add-service-btn" @click="openAddServiceDialog">Add New Service</button>
+      <button class="add-service-btn" @click="openAddServiceDialog">+ Add New Service</button>
     </div>
 
     <!-- Services List -->
@@ -12,9 +12,9 @@
         <div class="service-details">
           <h3>{{ service.name }}</h3>
           <p class="price">
-            <span v-if="service.offerPrice" class="original-price">Original Price: ${{ service.price }}</span>
-            <span v-if="service.offerPrice" class="offer-price">Offer Price: ${{ service.offerPrice }}</span>
-            <span v-else class="price-text">Price: ${{ service.price }}</span>
+            <span v-if="service.offerPrice" class="original-price">Original Price: ₹{{ service.price }}</span>
+            <span v-if="service.offerPrice" class="offer-price">Offer Price: ₹{{ service.offerPrice }}</span>
+            <span v-else class="price-text">Price: ₹{{ service.price }}</span>
           </p>
           <p v-if="service.offerPrice" class="offer-percentage">
             {{ calculateOfferPercentage(service.price, service.offerPrice) }}% off
@@ -22,7 +22,7 @@
         </div>
         <div class="service-actions">
           <button class="edit-btn" @click="editService(index)">✏️ Edit</button>
-          <button class="delete-btn" @click="deleteService(index)">🗑️ Delete</button>
+          <button class="delete-btn" @click="confirmDeleteService(index)">🗑️ Delete</button>
         </div>
       </div>
     </div>
@@ -58,6 +58,18 @@
         </form>
       </div>
     </div>
+
+    <!-- Delete Confirmation Popup -->
+    <div v-if="showDeleteConfirm" class="delete-confirm-overlay">
+      <div class="delete-confirm-dialog">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete this service?</p>
+        <div class="delete-confirm-actions">
+          <button @click="cancelDelete" class="cancel-btn">Cancel</button>
+          <button @click="deleteService(deleteIndex)" class="confirm-btn">Delete</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -75,6 +87,8 @@ export default {
         image: "",
       },
       editIndex: -1,
+      showDeleteConfirm: false,
+      deleteIndex: -1,
     };
   },
   methods: {
@@ -90,8 +104,18 @@ export default {
       this.editIndex = index;
       this.dialog = true;
     },
+    confirmDeleteService(index) {
+      this.deleteIndex = index;
+      this.showDeleteConfirm = true;
+    },
+    cancelDelete() {
+      this.showDeleteConfirm = false;
+      this.deleteIndex = -1;
+    },
     deleteService(index) {
       this.services.splice(index, 1);
+      this.showDeleteConfirm = false;
+      this.deleteIndex = -1;
     },
     saveService() {
       if (!this.serviceData.name || !this.serviceData.price || !this.serviceData.image) {
@@ -237,7 +261,7 @@ h1 {
 }
 
 .price-text {
-  color: white;
+  color: gold;
   font-size: 1.2rem;
 }
 
@@ -342,4 +366,67 @@ h1 {
   font-size: 1rem;
   box-sizing: border-box;
 }
-</style>
+
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.delete-confirm-dialog {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 10px;
+  color: black;
+  max-width: 300px;
+  width: 100%;
+  text-align: center;
+}
+
+.delete-confirm-dialog h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: gold;
+}
+
+.delete-confirm-dialog p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: black;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.cancel-btn,
+.confirm-btn {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid gold;
+  background: black;
+  color: gold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.cancel-btn:hover {
+  background: white;
+  color: black;
+}
+
+.confirm-btn:hover {
+  background: gold;
+  color: black;
+  border: 2px solid black;
+}
+</style> -->

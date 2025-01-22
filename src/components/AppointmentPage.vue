@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="container">
     <h1 class="page-title">Manage Appointments</h1>
 
@@ -431,4 +431,4 @@ export default {
   width: 70px;
   font-size: 16px;
 }
-</style>
+</style> -->
