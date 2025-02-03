@@ -51,14 +51,14 @@ const routes = [
                   name: 'AdminOverview',
                     component: () => import('@/components/AdminOverview.vue') 
                    },
-                   { path: '/doughnut', 
-                    name: 'DoughnutChart',
-                      component: () => import('@/components/DoughnutChart.vue') 
-                     },
-                     { path: '/', 
-                      name: 'DoughnutChart',
-                        component: () => import('@/components/DoughnutChart.vue') 
-                       },  
+                  //  { path: '/barchart', 
+                  //   name: 'BarChart',
+                  //     component: () => import('@/components/BarChart.vue') 
+                  //    },
+                  //    { path: '/doughnut', 
+                  //     name: 'DoughnutChart',
+                  //       component: () => import('@/components/DoughnutChart.vue') 
+                  //      },  
                
              
        

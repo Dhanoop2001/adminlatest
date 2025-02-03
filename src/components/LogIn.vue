@@ -28,12 +28,17 @@
             @click="togglePasswordVisibility"
             :aria-label="isPasswordVisible ? 'Hide password' : 'Show password'"
           >
-            {{ isPasswordVisible ? 'Hide' : 'Show' }}
+            <i :class="isPasswordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
           </button>
         </div>
       </div>
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
       <div class="form-group">
-        <button type="submit" class="login-button">Log In</button>
+        <button type="submit" class="login-button" :disabled="isLoading">
+          {{ isLoading ? 'LOGIN' : 'LOGIN' }}
+        </button>
       </div>
       <div class="form-group forgot-password">
         <span>
@@ -42,20 +47,35 @@
       </div>
     </form>
 
-    <!-- Forgot Password Modal -->
     <div v-if="isModalVisible" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h3>Reset Your Password</h3>
         <p>Please enter your email address to receive password reset instructions.</p>
-        <input
-          type="email"
-          v-model="resetEmail"
-          placeholder="Enter your email"
-          required
+        <input 
+          type="email" 
+          v-model="resetEmail" 
+          placeholder="Enter your email" 
+          required 
+          :disabled="isResetting"
         />
+        <div v-if="resetError" class="error-message">
+          {{ resetError }}
+        </div>
         <div class="modal-actions">
-          <button @click="handlePasswordReset" class="reset-button">Send Reset Link</button>
-          <button @click="closeModal" class="close-button">Close</button>
+          <button 
+            @click="handlePasswordReset" 
+            class="reset-button"
+            :disabled="isResetting"
+          >
+            {{ isResetting ? 'Sending...' : 'Send Reset Link' }}
+          </button>
+          <button 
+            @click="closeModal" 
+            class="close-button"
+            :disabled="isResetting"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -63,7 +83,8 @@
 </template>
 
 <script>
-import store from "@/store"; // Import Vuex store for API base URL
+import { mapActions } from 'vuex';
+import axios from 'axios';
 
 export default {
   name: "AdminLogin",
@@ -74,65 +95,108 @@ export default {
       password: "",
       isModalVisible: false,
       resetEmail: "",
+      error: null,
+      resetError: null,
+      isLoading: false,
+      isResetting: false
     };
   },
   methods: {
+    ...mapActions(['loginUser']),
+    
     togglePasswordVisibility() {
       this.isPasswordVisible = !this.isPasswordVisible;
     },
+    
     async handleLogin() {
       if (!this.email || !this.password) {
-        alert("Please enter both email and password.");
+        this.error = "Please enter both email and password.";
         return;
       }
 
+      this.error = null;
+      this.isLoading = true;
+
       try {
-        console.log("Sending login request...");
-        const response = await fetch(`${store.state.baseURL}/admin/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password,
-          }),
+        await this.loginUser({        // If login successful, redirect to admin panel
+
+          email: this.email,
+          password: this.password
         });
-
-        const data = await response.json();
-        console.log("Response:", data);
-
-        if (response.ok && data.token) {
-          localStorage.setItem("token", data.token);
-          this.$router.push("/admin-panel"); // Redirect on successful login
-        } else {
-          alert(data.message || "Invalid email or password.");
-        }
+        
+        this.$router.push("/admin-panel");
       } catch (error) {
         console.error("Login error:", error);
-        alert("An error occurred during login. Please check the console.");
+        if (error.response?.status === 401) {
+          this.error = "Invalid email or password.";
+        } else if (error.response?.status === 429) {
+          this.error = "Too many login attempts. Please try again later.";
+        } else {
+          this.error = "An error occurred during login. Please try again.";
+        }
+      } finally {
+        this.isLoading = false;
       }
     },
+    
     openForgotPasswordModal() {
       this.isModalVisible = true;
+      this.resetError = null;
+      this.resetEmail = this.email; // Pre-fill with email if available
     },
+    
     closeModal() {
+      if (this.isResetting) return;
       this.isModalVisible = false;
+      this.resetEmail = "";
+      this.resetError = null;
     },
-    handlePasswordReset() {
-      if (this.resetEmail) {
-        console.log(`Password reset email sent to: ${this.resetEmail}`);
-        alert(`Password reset email has been sent to ${this.resetEmail}.`);
-        this.closeModal();
-      } else {
-        alert("Please enter a valid email address.");
+    
+    async handlePasswordReset() {
+      if (!this.resetEmail) {
+        this.resetError = "Please enter a valid email address.";
+        return;
       }
-    },
-  },
+
+      this.resetError = null;
+      this.isResetting = true;
+
+      try {
+        // Replace with your actual API endpoint
+        await axios.post('/admin/reset-password', {
+          email: this.resetEmail
+        });
+        
+        alert(`Password reset email has been sent to ${this.resetEmail}`);
+        this.closeModal();
+      } catch (error) {
+        console.error("Password reset error:", error);
+        if (error.response?.status === 404) {
+          this.resetError = "Email address not found.";
+        } else if (error.response?.status === 429) {
+          this.resetError = "Too many reset attempts. Please try again later.";
+        } else {
+          this.resetError = "Failed to send reset email. Please try again.";
+        }
+      } finally {
+        this.isResetting = false;
+      }
+    }
+  }
 };
 </script>
 
 <style scoped>
+/* Existing styles remain unchanged */
+.error-message {
+  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
 /* General Styles */
 .login-container {
   display: flex;
@@ -188,6 +252,11 @@ input {
   box-sizing: border-box;
 }
 
+input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Password Field */
 .password-container {
   position: relative;
@@ -201,7 +270,7 @@ input {
   background: none;
   border: none;
   color: gold;
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 
@@ -216,6 +285,17 @@ input {
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-button:not(:disabled):hover {
+  background-color: gold;
+  color: black;
 }
 
 .forgot-password {
@@ -228,10 +308,12 @@ input {
   color: white;
   text-decoration: none;
   font-weight: bold;
+  transition: opacity 0.3s ease;
 }
 
 .forgot-password a:hover {
   text-decoration: underline;
+  opacity: 0.8;
 }
 
 /* Modal */
@@ -260,6 +342,16 @@ input {
   animation: fadeIn 0.3s ease-in-out;
 }
 
+.modal-content h3 {
+  color: black;
+  margin-bottom: 1rem;
+}
+
+.modal-content p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
 .modal-content input {
   width: 100%;
   padding: 0.75rem;
@@ -267,6 +359,8 @@ input {
   border-radius: 8px;
   font-size: 1rem;
   margin-bottom: 1rem;
+  background-color: white;
+  color: black;
 }
 
 .modal-actions {
@@ -281,16 +375,45 @@ input {
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reset-button:disabled,
+.close-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .reset-button {
   background-color: gold;
   color: black;
   font-weight: bold;
+  border: none;
+}
+
+.reset-button:not(:disabled):hover {
+  background-color: #ffd700;
+  transform: translateY(-1px);
 }
 
 .close-button {
   background-color: black;
   color: white;
+  border: 1px solid black;
+}
+
+.close-button:not(:disabled):hover {
+  background-color: #333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

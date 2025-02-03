@@ -52,6 +52,7 @@ export default {
       drawer: false,
       menuItems: [
         { title: "Dashboard", icon: "🏠", route: "/dashboard" },
+        { title: "Overview", icon: "👤", route: "/admin-overview" },
         
       ],
       cards: [

@@ -23,13 +23,10 @@
                 <i :class="stat.icon + ' fs-2 text-center rounded-circle'" :style="stat.iconStyle"></i>
                 <div class="ms-3">
                   <div class="d-flex align-items-center">
-                    <h3 class="mb-0">{{ getStatisticValue(stat, selectedTimeframe[index]) }}</h3> <span class="d-block ms-2">{{ stat.label }}</span>
+                    <h3 class="mb-0">{{ stat.value }}</h3> <span class="d-block ms-2">{{ stat.label }}</span>
                   </div>
                   <p class="fs-normal mb-0">{{ stat.description }}</p>
                 </div>
-              </div>
-              <div class="dropdown" style="position: absolute; top: 80px; right: 5px;width: 130px; height: 40px;">
-                <v-select v-if="index>1" density="compact" v-model="selectedTimeframe[index]" :items="timeframes"></v-select>
               </div>
             </v-card>
           </div>
@@ -39,7 +36,7 @@
           <div class="row">
             <v-card :style="{ width: '578px', marginBottom: '20px' }">
               <div class="chart-container rounded-2 p-3">
-                <h3 class="fs-6 mb-3">Total Income : 4,45784</h3>
+                <h3 class="fs-6 mb-3">Total Income</h3>
                 <bar-chart />
               </div>
             </v-card>
@@ -70,156 +67,95 @@ export default {
     DoughnutChart
   },
   setup() {
-    const selectedTimeframe = ref(['today', 'today', 'today', 'today']);
-    const timeframes = ['today', 'monthly', 'yearly'];
-
-    const statistics = [
-      { icon: 'fas fa-store',  value: 108, description: 'Total Parlours' },
-      { icon: 'fas fa-users', value: 112, description: 'Total Users' },
-      { icon: 'fas fa-calendar-check', values: [80, 2400, 864000], description: 'Total Booking' },
-      { icon: 'uil-rupee-sign', values: [15000, 450000, 4457084], description: 'Total Income' }
-    ];
-
-    const getStatisticValue = (stat, timeframe) => {
-      if (Array.isArray(stat.values)) {
-        switch (timeframe) {
-          case 'today':
-            return stat.values[0];
-          case 'monthly':
-            return stat.values[1];
-          case 'yearly':
-            return stat.values[2];
-        }
-      }
-      return stat.value;
-    };
+    const statistics = ref([]);
 
     return {
-      selectedTimeframe,
-      timeframes,
-      statistics,
-      getStatisticValue
+      statistics
     };
   },
-  methods:{
+  methods: {
     logout() {
       console.log("logout");
-      this.$router.push("/"); 
+      this.$router.push("/");
     },
   }
 };
 </script>
 
 <style scoped>
-  /* Styling for the overall container */
-  #wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f4f4f4;
-    min-height: 100vh; /* Ensure full height */
-    flex-grow: 1; /* Allow wrapper to take available space */
-  }
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+  flex-grow: 1;
+}
 
-  /* Styling for the welcome section */
-  .welcome {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .content {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 800px;
-  }
+.welcome {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
-  h1.fs-3 {
-    text-align: center;
-    margin-top: 40px;
-    font-size: 1.8rem;
-  }
+.content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+}
 
-  /* Styling for the statistics section */
-  .statistics {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    flex-grow: 1; /* Ensure it takes available space */
-  }
+h1.fs-3 {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 1.8rem;
+}
 
-  .cards-container {
-    display: flex;
-    flex-direction: row; /* Align cards side by side */
-    justify-content: center; /* Align the cards in the center */
-    gap: 20px; /* Spacing between cards */
-    flex-wrap: wrap; /* Allow cards to wrap when there's not enough space */
-  }
+.statistics {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-grow: 1;
+}
 
-  /* Individual statistics card styling */
-  .v-card.bg {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    background-color: rgb(0, 0, 0);
-    border-radius: 10px;
-    color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    height: 120px;
-    width: 280px;
-  }
+.cards-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
 
-  .box {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
+.v-card.bg {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: rgb(0, 0, 0);
+  border-radius: 10px;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 120px;
+  width: 280px;
+}
 
-  .fs-2 {
-    font-size: 2rem;
-  }
+.charts .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-grow: 1;
+}
 
-  .ms-3 {
-    margin-left: 15px;
-  }
-
-  .fs-normal {
-    font-size: 1rem;
-  }
-
-  .dropdown {
-    position: absolute;
-    top: 80px;
-    right: 5px;
-    width: 130px;
-    height: 40px;
-  }
-
-  /* Styling for charts section */
-  .charts .row {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-grow: 1; /* Ensure charts section expands */
-  }
-
-  .chart-container {
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  h3.fs-6 {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-  }
+.chart-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 </style>
