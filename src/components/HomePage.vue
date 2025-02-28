@@ -3,24 +3,13 @@
     <!-- Logo and Website Name Section -->
     <div class="logo-container">
       <img :src="require('@/assets/spalogo.png')" alt="Spa Logo" class="spa-logo" />
-      <span class="website-name">Salon Info</span>
+      <span class="website-name">Glow Info</span>
     </div>
 
     <div class="blue-box">
       <h1>Welcome, Admin</h1>
       <div class="button-container">
-        <!-- <button 
-          class="btn signup-btn" 
-          @click="triggerRipple('signup')"
-        >
-          SIGN UP
-        </button> -->
-        <button 
-          class="btn login-btn" 
-          @click="triggerRipple('login')"
-        >
-          LOGIN
-        </button>
+        <button class="btn login-btn" @click="triggerRipple('login')">LOGIN</button>
       </div>
     </div>
     <div 
@@ -52,7 +41,7 @@ export default {
         } else {
           this.$router.push("/log-in");
         }
-      }, 1000); // Adjust timing if needed
+      }, 1000);
     },
     handleRippleEnd() {
       this.isRippling = false;
@@ -125,26 +114,23 @@ h1 {
 .btn {
   padding: 0.75rem 1.5rem;
   font-size: 1.2rem;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.6);
-  border: none;
-  border-radius: 5px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  border-radius: 5px;
 }
 
-.btn:hover {
-  background-color: black;
-  color: gold;
-}
-
-.signup-btn {
-  background-color: white;
-  color: black;
-}
-
+/* Updated login button style */
 .login-btn {
-  background-color: white;
+  border: 2px solid white;
+  background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white */
+  color: black;
+  font-weight: bold;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.login-btn:hover {
+  background-color: white; /* Solid white on hover */
   color: black;
 }
 
@@ -172,11 +158,7 @@ h1 {
   animation: rippleEffect 1s forwards ease-in-out;
 }
 
-.ripple-signup {
-  background-color: rgba(34, 34, 32, 0.521);
-}
-
-.ripple-login {
+.ripple-signup, .ripple-login {
   background-color: rgba(34, 34, 32, 0.521);
 }
 

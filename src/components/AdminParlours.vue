@@ -1,128 +1,168 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar
-      style="z-index: 1; background-image: linear-gradient(135deg, transparent 0%, transparent 50%, rgba(159, 159, 159, 0.07) 50%, rgba(159, 159, 159, 0.07) 77%, transparent 77%, transparent 100%), linear-gradient(90deg, transparent 0%, transparent 91%, rgba(159, 159, 159, 0.07) 91%, rgba(159, 159, 159, 0.07) 99%, transparent 99%, transparent 100%), linear-gradient(135deg, transparent 0%, transparent 24%, rgba(159, 159, 159, 0.07) 24%, rgba(159, 159, 159, 0.07) 63%, transparent 63%, transparent 100%), linear-gradient(0deg, transparent 0%, transparent 49%, rgba(159, 159, 159, 0.07) 49%, rgba(159, 159, 159, 0.07) 63%, transparent 63%, transparent 100%), linear-gradient(90deg, rgb(0, 0, 0), rgb(0, 0, 0));"
-      color="teal-darken-4"
-    >
-      <v-app-bar-title>SalonInfo</v-app-bar-title>
+    <v-app-bar color="teal-darken-4" dense>
+      <v-toolbar-title class="white--text">SalonInfo</v-toolbar-title>
     </v-app-bar>
+
     <v-main>
-      <v-card class="elevation-2">
-        <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
-          <v-tab value="2">Pending Requests</v-tab>
-          <v-tab value="1">Approved Requests</v-tab>
-        </v-tabs>
-      </v-card>
+      <v-container>
+        <v-card class="elevation-3 pa-3">
+          <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
+            <v-tab value="pending">Pending Requests</v-tab>
+            <v-tab value="approved">Approved Requests</v-tab>
+          </v-tabs>
+        </v-card>
 
-      <v-container v-if="tab === '2'" key="pending">
-        <v-data-table
-          :headers="headings"
-          :items="pendingParlours"
-          class="elevation-1"
-        >
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-btn color="black" @click="approve(item.parlour_id)">Approve</v-btn>
-            <v-btn color="black" margin-left="15px" @click="reject(item.parlour_id)">Reject</v-btn>
-          </template>
-        </v-data-table>
-      </v-container>
+        <v-container v-if="loading" class="d-flex justify-center my-5">
+          <v-progress-circular indeterminate color="primary" size="50"></v-progress-circular>
+        </v-container>
 
-      <v-container v-if="tab === '1'" key="approved">
-        <v-data-table
-          :headers="headings1"
-          :items="approvedParlours"
-          class="elevation-1"
-        >
-        <template v-slot:[`item.parlour_image`]="{ item }">
-           <v-img :src="item.parlour_image" width="50" height="50"></v-img>
-        </template>
-      </v-data-table>
+        <!-- Parlour Requests Table -->
+        <v-container>
+          <v-card class="elevation-2 pa-4">
+            <v-data-table 
+              :items="tab === 'pending' ? pendingParlours : approvedParlours" 
+              class="elevation-1"
+            >
+              <template v-slot:item="{ item }">
+                <tr>
+                  <td>{{ item.sl_no }}</td>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.licenseNumber }}</td>
+                  <td>{{ item.phone }}</td>
+                  <td>{{ item.email }}</td>
+                  <td>{{ item.location }}</td>
+                  <td>{{ item.latitude }}</td>
+                  <td>{{ item.longitude }}</td>
+                  <td>{{ item.description }}</td>
+                  <td>
+                    <v-btn v-if="tab === 'pending'" color="success" small @click="approveParlour(item.id)">Approve</v-btn>
+                    <v-btn color="error" small class="ml-2" @click="deleteParlour(item.id)">Delete</v-btn>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-container>
+
+        <!-- Confirmation Dialog for Deletion -->
+        <v-dialog v-model="deleteDialog" max-width="400">
+          <v-card>
+            <v-card-title class="headline">Confirm Deletion</v-card-title>
+            <v-card-text>
+              Are you sure you want to delete this parlour?
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="deleteDialog = false">No</v-btn>
+              <v-btn color="red darken-1" text @click="confirmDelete">Yes</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import store from "../store"; // Adjust the path if needed
+import axios from "axios";
 
 export default {
-  store,
+  name: "AdminParlours",
   data() {
     return {
-      tab: "2",
-      headings: [
-        { text: "Sl.no", key: "sl_no" },
-        { text: "Parlour ID", key: "parlour_id" },
-        { text: "Parlour Image", key: "parlour_image" },
-        { text: "Name", key: "name" },
-        { text: "Phone", key: "phone" },
-        { text: "Email", key: "email" },
-        { text: "View", key: "view", sortable: false },
-        { text: "Delete", key: "delete", sortable: false },
-        { text: "Actions", key: "actions", sortable: false },
-      ],
-      headings1: [
-        { text: "Sl.no", key: "sl_no" },
-        { text: "Parlour ID", key: "parlour_id" },
-        { text: "Parlour Image", key: "parlour_image" },
-        { text: "Name", key: "name" },
-        { text: "Phone", key: "phone" },
-        { text: "Email", key: "email" },
-        { text: "Details", key: "details", sortable: false },
-        { text: "Delete", key: "delete", sortable: false },
-      ],
+      tab: "pending",
+      loading: false,
+      parlours: [],
+      deleteDialog: false,
+      selectedParlourId: null
     };
   },
   computed: {
-    ...mapGetters(["getAllParlours"]),
     pendingParlours() {
-      return this.getAllParlours.filter((parlour) => !parlour.approved);
+      return this.parlours.filter(p => p.status === 0);
     },
     approvedParlours() {
-      return this.getAllParlours.filter((parlour) => parlour.approved);
-    },
+      return this.parlours.filter(p => p.status === 1);
+    }
   },
   methods: {
-    ...mapActions(["fetchParlours", "approveParlour", "rejectParlour", "deleteParlour"]),
-    approve(parlourId) {
-      this.approveParlour(parlourId)
-        .then(() => {
-          this.fetchParlours(); // Refresh the parlours list
-        })
-        .catch((error) => {
-          console.error("Failed to approve parlour:", error);
+    async fetchParlours() {
+      this.loading = true;
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          this.$router.push("/log-in");
+          return;
+        }
+
+        const response = await axios.get("http://192.168.1.200:8086/api/admin/allRegisteredParlour", {
+          headers: { Authorization: `Bearer ${token}` }
         });
+
+        console.log("API Response:", response.data); // Debugging line
+
+        this.parlours = Array.isArray(response.data) ? response.data.map((p, index) => ({
+          sl_no: index + 1,
+          id: p.id,
+          name: p.parlourName,
+          licenseNumber: p.licenseNumber || "N/A", // Fetching License Number
+          phone: p.phoneNumber,
+          email: p.email,
+          location: p.location,
+          latitude: p.latitude || "N/A",
+          longitude: p.longitude || "N/A",
+          description: p.description,
+          status: p.status
+        })) : [];
+
+      } catch (error) {
+        console.error("Error fetching parlours:", error.response ? error.response.data : error.message);
+      } finally {
+        this.loading = false;
+      }
     },
-    reject(parlourId) {
-      this.rejectParlour(parlourId)
-        .then(() => {
-          this.fetchParlours(); // Refresh the parlours list
-        })
-        .catch((error) => {
-          console.error("Failed to reject parlour:", error);
+    async approveParlour(id) {
+      try {
+        const token = localStorage.getItem("adminToken");
+        await axios.put(`http://192.168.1.200:8086/api/admin/approve?id=${id}&status=1`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
         });
+        this.fetchParlours();
+      } catch (error) {
+        console.error("Error approving parlour:", error.response ? error.response.data : error.message);
+      }
     },
-    deleteParlour(parlourId) {
-      this.deleteParlour(parlourId)
-        .then(() => {
-          this.fetchParlours(); // Refresh the parlours list
-        })
-        .catch((error) => {
-          console.error("Failed to delete parlour:", error);
-        });
+    deleteParlour(id) {
+      this.selectedParlourId = id;
+      this.deleteDialog = true;
     },
+    async confirmDelete() {
+      if (this.selectedParlourId) {
+        try {
+          const token = localStorage.getItem("adminToken");
+          await axios.delete(`http://192.168.1.200:8086/api/admin/parlour/delete?id=${this.selectedParlourId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          this.fetchParlours();
+        } catch (error) {
+          console.error("Error deleting parlour:", error.response ? error.response.data : error.message);
+        } finally {
+          this.deleteDialog = false;
+          this.selectedParlourId = null;
+        }
+      }
+    }
   },
-  mounted() {
+  created() {
     this.fetchParlours();
-  },
+  }
 };
 </script>
 
 <style scoped>
-.qr {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
+.v-container {
+  margin-top: 20px;
 }
 </style>

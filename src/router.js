@@ -59,6 +59,15 @@ const routes = [
                   //     name: 'DoughnutChart',
                   //       component: () => import('@/components/DoughnutChart.vue') 
                   //      },  
+                  { path: '/gst-page', 
+                    name: 'GstPage',
+                      component: () => import('@/components/GstPage.vue') 
+                     },
+                     { path: '/app-charge', 
+                      name: 'AppCharge',
+                        component: () => import('@/components/AppCharge.vue') 
+                       },
+  
                
              
        

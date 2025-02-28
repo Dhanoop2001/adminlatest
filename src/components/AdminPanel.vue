@@ -36,7 +36,7 @@
           <h3 class="card-title">{{ card.title }}</h3>
           <div class="card-actions">
             <button class="manage-btn" @click="manage(card.route)">
-              Manage
+              MANAGE
             </button>
           </div>
         </div>
@@ -53,6 +53,8 @@ export default {
       menuItems: [
         { title: "Dashboard", icon: "🏠", route: "/dashboard" },
         { title: "Overview", icon: "👤", route: "/admin-overview" },
+        { title: "GST",  route: "/gst-page" },
+        { title: "APP CHARGE",  route: "/app-charge" },
         
       ],
       cards: [
@@ -180,8 +182,8 @@ export default {
 }
 
 .logout-btn:hover {
-  color: gold;
-  border: 1px solid gold;
+  color: white;
+  border: 1px solid white;
 }
 
 .toggle-arrow-btn {
@@ -240,7 +242,7 @@ export default {
   border-radius: 8px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border: 2px solid gold;
+  border: 2px solid black;
   color: black;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -262,23 +264,24 @@ export default {
 .card-actions {
   padding: 10px;
   background-color: black;
-  border-top: 2px solid gold;
+  border-top: 2px solid black;
 }
 
 .manage-btn {
-  background-color: gold;
+  background-color: white;
   color: black;
   border: none;
   padding: 10px;
   border-radius: 4px;
-  font-weight: bold;
+  font-weight: bolder;
+  font-size: small;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .manage-btn:hover {
-  border: 1px solid gold;
-  color: gold;
+  border: 1px solid white;
+  color: white;
   background-color: transparent;
   transform: scale(1.1);
 }
