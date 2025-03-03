@@ -58,7 +58,7 @@ export default {
         
       ],
       cards: [
-        { title: "Offers", route: "admin-offers" },
+        { title: "Offers", route: "/admin-offers" },
         { title: "Category", route: "/admin-category" },
         { title: "Parlours", route: "/admin-parlours" },
       ],

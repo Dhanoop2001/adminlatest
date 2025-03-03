@@ -97,7 +97,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("http://192.168.1.200:8086/api/admin/allRegisteredParlour", {
+        const response = await axios.get("http://192.168.1.34:8086/api/admin/allRegisteredParlour", {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -126,7 +126,7 @@ export default {
     async approveParlour(id) {
       try {
         const token = localStorage.getItem("adminToken");
-        await axios.put(`http://192.168.1.200:8086/api/admin/approve?id=${id}&status=1`, {}, {
+        await axios.put(`http://192.168.1.34:8086/api/admin/approve?id=${id}&status=1`, {}, {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.fetchParlours();
@@ -142,7 +142,7 @@ export default {
       if (this.selectedParlourId) {
         try {
           const token = localStorage.getItem("adminToken");
-          await axios.delete(`http://192.168.1.200:8086/api/admin/parlour/delete?id=${this.selectedParlourId}`, {
+          await axios.delete(`http://192.168.1.34:8086/api/admin/parlour/delete?id=${this.selectedParlourId}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           this.fetchParlours();
