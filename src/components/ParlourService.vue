@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div class="services-page">
     <div class="header">
       <h1>Services Management</h1>
@@ -429,4 +429,4 @@ h1 {
   color: black;
   border: 2px solid black;
 }
-</style> -->
+</style>

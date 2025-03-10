@@ -2,44 +2,40 @@
   <div class="signup-container">
     <div class="form-section">
       <h1 class="heading">SIGN IN</h1>
-      
+
       <form @submit.prevent="handleSubmit">
-        
-        
         <div class="form-group">
-          <label for="email">Email address</label>
-          <input 
-            type="email" 
-            id="email" 
-            v-model="form.email" 
-            placeholder="Enter your email" 
+          <v-text-field
+            label="Email address"
+            v-model="form.email"
+            type="email"
+            placeholder="Enter your email"
             required
-          />
+            outlined
+            dense
+          ></v-text-field>
         </div>
-        
+
         <div class="form-group">
-          <label for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="form.password" 
-            placeholder="Enter your password" 
+          <v-text-field
+            label="Password"
+            v-model="form.password"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="Enter your password"
             required
-          />
+            outlined
+            dense
+            :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append-inner="showPassword = !showPassword"
+          ></v-text-field>
         </div>
-        
-        
-        
-        <button type="submit" class="signup-button">Sign in</button>
-        
-        
-        
-        
-        
-        
+
+        <v-btn type="submit" block class="signup-button">Sign in</v-btn>
+
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
     </div>
-    
+
     <div class="image-section">
       <!-- Monstera leaf image background will be set with CSS -->
     </div>
@@ -47,36 +43,58 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'SignupPage',
+  name: 'LoginPage',
   data() {
     return {
       form: {
-        name: '',
         email: '',
-        password: '',
-        termsAccepted: false
-      }
-    }
+        password: ''
+      },
+      showPassword: false,
+      errorMessage: ''
+    };
   },
   methods: {
-    handleSubmit() {
-      // Handle form submission here
-      console.log('Form submitted:', this.form);
-      // You would typically call an API endpoint here
+    async handleSubmit() {
+      this.errorMessage = ''; // Reset error message
+      try {
+        const response = await axios.post('http://192.168.1.200:8086/api/admin/AdminLogin', {
+          email: this.form.email,
+          password: this.form.password
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log('Full API Response:', response); // Debugging log
+
+        if (response.status === 200) {
+          this.storeToken(response.data?.token); // Store the token
+          console.log('Login successful, navigating to admin panel...');
+          this.$router.push('/admin-panel'); // Redirect to admin panel
+        } else {
+          this.errorMessage = 'Unexpected response. Please try again.';
+        }
+      } catch (error) {
+        console.error('Login failed:', error);
+
+        if (error.response) {
+          this.errorMessage = error.response.data?.message || 'Login failed. Please check your credentials.';
+        } else if (error.request) {
+          this.errorMessage = 'No response from server. Please try again later.';
+        } else {
+          this.errorMessage = 'An unexpected error occurred.';
+        }
+      }
     },
-    signInWithGoogle() {
-      console.log('Sign in with Google clicked');
-      // Implement Google OAuth login
-    },
-    signInWithApple() {
-      console.log('Sign in with Apple clicked');
-      // Implement Apple OAuth login
-    },
-    goToLogin() {
-      console.log('Redirecting to login page');
-      // Redirect to login page
-      // this.$router.push('/login');
+    storeToken(token) {
+      if (token) {
+        localStorage.setItem('authToken', token); // Store the token in local storage
+      }
     }
   }
 }
@@ -97,54 +115,6 @@ export default {
   justify-content: center;
 }
 
-.image-section {
-  flex: 1;
-  background-image: url('@/assets/hair.jpg');
-  background-size: cover;
-  background-position: center;
-}
-
-.heading {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  font-weight: bold;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.terms-checkbox {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.terms-checkbox input {
-  margin-right: 0.5rem;
-}
-
-.terms-link {
-  color: #444;
-  text-decoration: underline;
-}
-
 .signup-button {
   width: 100%;
   padding: 0.75rem;
@@ -161,70 +131,26 @@ input[type="password"] {
   background-color: black;
 }
 
-.divider {
-  position: relative;
-  text-align: center;
-  margin: 1.5rem 0;
+.image-section {
+  flex: 1;
+  background-image: url('@/assets/hair.jpg'); /* Update with your image path */
+  background-size: cover;
+  background-position: center;
 }
 
-.divider::before,
-.divider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 45%;
-  height: 1px;
-  background-color: #ddd;
+.heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
 }
 
-.divider::before {
-  left: 0;
-}
-
-.divider::after {
-  right: 0;
-}
-
-.divider span {
-  background-color: white;
-  padding: 0 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.social-logins {
-  display: flex;
-  gap: 10px;
+.form-group {
   margin-bottom: 1.5rem;
 }
 
-.social-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0.75rem;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.social-btn:hover {
-  background-color: #f5f5f5;
-}
-
-.login-link {
-  text-align: center;
-}
-
-.login-link a {
-  color: #3a6832;
-  font-weight: 500;
-  text-decoration: none;
+.error-message {
+  color: red;
+  margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -238,10 +164,6 @@ input[type="password"] {
   
   .form-section {
     padding: 2rem;
-  }
-  
-  .social-logins {
-    flex-direction: column;
   }
 }
 </style>

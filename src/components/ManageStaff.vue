@@ -1,6 +1,6 @@
 <!-- <template>
   <div class="admin-dashboard">
-    <!-- Sidebar -->
+    
     <aside class="sidebar">
       <div class="logo">
         <h1>Salon Info</h1>
@@ -16,14 +16,14 @@
       </nav>
     </aside>
 
-    <!-- Main Content -->
+    
     <main class="main-content">
       <header class="header">
         <h1>Manage Salon Info Staff</h1>
         <button @click="showModal = true" class="add-staff-btn">+ Add Staff</button>
       </header>
 
-      <!-- Staff Table -->
+    
       <div class="staff-table">
         <table>
           <thead>
@@ -47,16 +47,15 @@
           </tbody>
         </table>
       </div>
-    </main>
-
-    <!-- Add/Edit Staff Modal -->
+    
+  
     <div v-if="showModal" class="modal-overlay">
       <div class="modal">
         <h2>{{ isEditing ? 'Edit Staff' : 'Add Staff' }}</h2>
         <form @submit.prevent="handleSubmit">
           <input v-model="staff.name" type="text" placeholder="Full Name" required />
 
-          <!-- Role Dropdown -->
+        
           <select v-model="staff.role" required>
             <option value="" disabled selected>Select Role</option>
             <option value="Stylists">Stylists</option>
