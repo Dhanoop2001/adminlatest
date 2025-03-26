@@ -1,6 +1,6 @@
 <!-- <template>
   <div class="signup-container">
-    <!-- Back Icon -->
+   
     <div class="back-icon" @click="$router.push('/')"
       :style="{ pointerEvents: showSuccessPopup ? 'none' : 'auto' }"
       :class="{ 'disabled': showSuccessPopup }"
@@ -79,7 +79,7 @@
       </div>
     </form>
 
-    <!-- Success Popup -->
+   
     <div v-if="showSuccessPopup">
       <div class="blur-overlay"></div>
       <div class="success-popup">
