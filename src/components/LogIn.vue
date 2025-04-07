@@ -133,7 +133,7 @@ export default {
   this.loginError = '';
 
   try {
-    const response = await axios.post('http://192.168.1.25:8086/api/admin/AdminLogin', {
+    const response = await axios.post('http://192.168.1.14:8086/api/admin/AdminLogin', {
       email: this.email,
       password: this.password
     }, {

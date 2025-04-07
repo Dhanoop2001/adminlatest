@@ -106,14 +106,16 @@
                   v-if="tab === 'pending'" 
                   class="action-button approve" 
                   @click="openApproveDialog(item.id)"
+                  title="Approve"
                 >
-                  <i class="fas fa-check"></i> Approve
+                  <i class="fas fa-check"></i>
                 </button>
                 <button 
-                  class="action-button delete" 
-                  @click="openDeleteDialog(item.id)"
+                  class="action-button decline" 
+                  @click="openDeclineDialog(item.id)"
+                  title="Decline"
                 >
-                  <i class="fas fa-trash"></i> Delete
+                  <i class="fas fa-times"></i> <!-- Decline icon -->
                 </button>
               </span>
             </div>
@@ -142,21 +144,21 @@
       </div>
     </div>
 
-    <!-- Delete Confirmation Dialog -->
-    <div v-if="deleteDialog" class="dialog-backdrop">
+    <!-- Decline Confirmation Dialog -->
+    <div v-if="declineDialog" class="dialog-backdrop">
       <div class="dialog-card">
         <div class="dialog-header">
-          <h3><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h3>
+          <h3><i class="fas fa-exclamation-triangle"></i> Confirm Decline</h3>
         </div>
         <div class="dialog-body">
-          <p>Are you sure you want to delete this parlour?</p>
+          <p>Are you sure you want to decline this parlour?</p>
         </div>
         <div class="dialog-footer">
-          <button class="dialog-button cancel" @click="deleteDialog = false">
+          <button class="dialog-button cancel" @click="declineDialog = false">
             <i class="fas fa-times"></i> Cancel
           </button>
-          <button class="dialog-button delete" @click="confirmDelete(selectedParlourId)">
-            <i class="fas fa-trash"></i> Delete
+          <button class="dialog-button confirm" @click="confirmDecline(selectedParlourId)">
+            <i class="fas fa-check"></i> Decline
           </button>
         </div>
       </div>
@@ -189,7 +191,7 @@ export default {
       loading: false,
       parlours: [],
       approveDialog: false,
-      deleteDialog: false,
+      declineDialog: false, // Added decline dialog
       licensePopup: false,
       selectedLicenseNumber: null,
       selectedImageUrl: null,
@@ -222,11 +224,11 @@ export default {
     async fetchParlours() {
       this.loading = true;
       try {
-        const response = await axios.get("http://192.168.1.25:8086/api/admin/allRegisteredParlour", {
+        const response = await axios.get("http://192.168.1.14:8086/api/admin/allRegisteredParlour", {
           headers: { 'Authorization': `Bearer ${this.token}` }
         });
         this.parlours = response.data.map((p, index) => ({
-          sl_no: index + 1,
+          sl_no: index + 1, // Adjusted to start from 1
           id: p.id,
           parlourName: p.parlourName,
           licenseNumber: p.licenseNumber,
@@ -259,7 +261,7 @@ export default {
       if (!id) return;
       try {
         await axios.put(
-          `http://192.168.1.25:8086/api/admin/approve?id=${id}&status=1`,
+          `http://192.168.1.14:8086/api/admin/approve?id=${id}&status=1`,
           {},
           { headers: { 'Authorization': `Bearer ${this.token}` } }
         );
@@ -269,21 +271,22 @@ export default {
         console.error("Error approving parlour:", error);
       }
     },
-    openDeleteDialog(id) {
+    openDeclineDialog(id) {
       this.selectedParlourId = id;
-      this.deleteDialog = true;
+      this.declineDialog = true;
     },
-    async confirmDelete(id) {
+    async confirmDecline(id) {
       if (!id) return;
       try {
         await axios.delete(
-          `http://192.168.1.25:8086/api/admin/parlour/delete?id=${id}`,
+          `http://192.168.1.14:8086/api/admin/parlour/delete?id=${id}`, // Adjust the endpoint as necessary
+          
           { headers: { 'Authorization': `Bearer ${this.token}` } }
         );
         this.fetchParlours();
-        this.deleteDialog = false;
+        this.declineDialog = false; // Close the dialog after confirming
       } catch (error) {
-        console.error("Error deleting parlour:", error.response ? error.response.data : error.message);
+        console.error("Error declining parlour:", error);
       }
     },
     openLicensePopup(licenseNumber, licenseImage) {
@@ -497,17 +500,6 @@ export default {
   font-weight: 500;
 }
 
-.menu-item:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.menu-item.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border-left: 4px solid white;
-}
-
 .menu-item.logout {
   margin-top: auto;
   color: #ff6b6b;
@@ -675,46 +667,48 @@ export default {
 
 .table-cell.actions {
   display: flex;
-  gap: 10px;
+  gap: 15px; /* Adjust the gap between buttons */
   justify-content: flex-start;
 }
 
 .action-button {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
   border: none;
-  border-radius: 30px;
-  padding: 0.75rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  border-radius: 20px; /* Rounded corners for elliptical shape */
+  padding: 0.5rem 1rem; /* Add padding for a more elongated shape */
   cursor: pointer;
-  transition: all 0.3s;
-}
-
-.action-button i {
-  margin-right: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
 }
 
 .action-button.approve {
-  background: linear-gradient(to right, #36d1dc, #5b86e5);
+  background: linear-gradient(to right, #36d1dc, #5b86e5); /* Gradient background */
   color: white;
 }
 
 .action-button.approve:hover {
-  background: linear-gradient(to right, #32c3cd, #4e75d9);
-  box-shadow: 0 4px 10px rgba(91, 134, 229, 0.3);
-  transform: translateY(-2px);
+  background: linear-gradient(to right, #32c3cd, #4e75d9); /* Darker gradient on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
 }
 
-.action-button.delete {
-  background: linear-gradient(to right, #ff416c, #ff4b2b);
+.action-button.decline {
+  background: linear-gradient(to right, #ff416c, #ff4b2b); /* Gradient background */
   color: white;
 }
 
-.action-button.delete:hover {
-  background: linear-gradient(to right, #f13b63, #f44426);
-  box-shadow: 0 4px 10px rgba(255, 65, 108, 0.3);
+.action-button.decline:hover {
+  background: linear-gradient(to right, #f13b63, #f44426); /* Darker gradient on hover */
+  transform: translateY(-2px); /* Lift effect on hover */
+}
+
+/* Icon styles */
+.action-button i {
+  font-size: 1.2rem; /* Increase icon size */
+  transition: transform 0.3s ease; /* Smooth transition for icon */
+}
+
+.action-button:hover i {
+  transform: scale(1.1); /* Slightly enlarge icon on hover */
 }
 
 /* Empty state */
@@ -770,6 +764,7 @@ export default {
   color: white;
   padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for separation */
+  gap: 12px;
 }
 
 .dialog-header h3 {

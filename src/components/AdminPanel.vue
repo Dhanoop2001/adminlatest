@@ -203,14 +203,7 @@ export default {
   transition: all 0.3s ease;
 }
 
-.menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
 
-.menu-item.active {
-  background-color: rgba(255, 255, 255, 0.2);
-  font-weight: 600;
-}
 
 .icon {
   margin-right: 12px;
