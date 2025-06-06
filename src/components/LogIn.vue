@@ -14,7 +14,6 @@
             <span class="logo-icon"><i class="fas fa-spa"></i></span>
           </div>
           <h1 class="brand-name">SalonInfo <br> <span>AdminLogin</span></h1>
-          
         </div>
         
         <div class="login-form-section">
@@ -60,8 +59,6 @@
             <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
           </div>
           
-          
-          
           <button 
             class="login-button" 
             @click="login" 
@@ -76,6 +73,16 @@
           <div v-if="loginError" class="error-alert">
             <i class="fas fa-exclamation-triangle"></i>
             <span>{{ loginError }}</span>
+          </div>
+
+          <!-- Link to Sign Up Page -->
+          <div class="sign-up-link">
+            <p>Don't have an account? <router-link to="/" class="sign-up-text">Sign Up</router-link></p>
+          </div>
+
+          <!-- Add Forgot Password Link -->
+          <div class="forgot-password-link">
+            <p><router-link to="/forgot-password" class="forgot-password-text">Forgot Password?</router-link></p>
           </div>
         </div>
       </div>
@@ -111,6 +118,7 @@ export default {
       
       let isValid = true;
       
+      // Email validation
       if (!this.email) {
         this.errors.email = 'Email address is required';
         isValid = false;
@@ -119,49 +127,53 @@ export default {
         isValid = false;
       }
       
+      // Password validation
       if (!this.password) {
         this.errors.password = 'Password is required';
         isValid = false;
+      } else if (this.password.length < 8) {
+        this.errors.password = 'Password must be at least 8 characters long';
+ isValid = false;
       }
       
       return isValid;
     },
     async login() {
-  if (!this.validateForm()) return;
+      if (!this.validateForm()) return;
 
-  this.isLoading = true;
-  this.loginError = '';
+      this.isLoading = true;
+      this.loginError = '';
 
-  try {
-    const response = await axios.post('http://192.168.1.14:8086/api/admin/AdminLogin', {
-      email: this.email,
-      password: this.password
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
+      try {
+        const response = await axios.post('http://192.168.1.2:8086/api/admin/AdminLogin', {
+          email: this.email,
+          password: this.password
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Extract token from response
+        const token = response.data;
+
+        // Store token in sessionStorage
+        sessionStorage.setItem('admin_token', token);
+
+        // Redirect to dashboard
+        this.$router.push('/admin-parlours');
+
+      } catch (error) {
+        console.error('Login error:', error);
+        if (error.response && error.response.data) {
+          this.loginError = error.response.data.message || 'Login failed. Please check your credentials.';
+        } else {
+          this.loginError = 'Network error. Please try again later.';
+        }
+      } finally {
+        this.isLoading = false;
       }
-    });
-
-    // Extract token from response
-    const token = response.data;
-
-    // Store token in sessionStorage
-    sessionStorage.setItem('admin_token', token);
-
-    // Redirect to dashboard
-    this.$router.push('/admin-panel');
-
-  } catch (error) {
-    console.error('Login error:', error);
-    if (error.response && error.response.data) {
-      this.loginError = error.response.data.message || 'Login failed. Please check your credentials.';
-    } else {
-      this.loginError = 'Network error. Please try again later.';
     }
-  } finally {
-    this.isLoading = false;
-  }
-}
   }
 }
 </script>
@@ -325,14 +337,6 @@ export default {
   font-weight: 300;
 }
 
-.brand-slogan {
-  font-size: 14px;
-  opacity: 0.8;
-  text-align: center;
-  max-width: 80%;
-  margin: 0 auto;
-}
-
 .login-form-section {
   width: 60%;
   padding: 50px 60px;
@@ -416,42 +420,6 @@ export default {
   color: #555;
 }
 
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.remember-option {
-  display: flex;
-  align-items: center;
-}
-
-.remember-option input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
-  accent-color: #1e50e2;
-}
-
-.remember-option label {
-  font-size: 14px;
-  color: #555;
-}
-
-.forgot-link {
-  font-size: 14px;
-  color: #1e50e2;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.forgot-link:hover {
-  color: #0a2463;
-  text-decoration: underline;
-}
-
 .login-button {
   width: 100%;
   padding: 15px;
@@ -489,7 +457,8 @@ export default {
   box-shadow: 0 7px 14px rgba(30, 80, 226, 0.25);
 }
 
-.login-button:disabled {
+.login-button:disabled 
+{
   background: #ccc;
   box-shadow: none;
   cursor: not-allowed;
@@ -502,7 +471,7 @@ export default {
 
 .spinner {
   width: 20px;
- height: 20px;
+  height: 20px;
   border: 3px solid rgba(255, 255, 255, 0.5);
   border-top: 3px solid #ffffff;
   border-radius: 50%;
@@ -536,5 +505,35 @@ export default {
 
 .error-alert i {
   margin-right: 10px;
+}
+
+.sign-up-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.sign-up-text {
+  color: #1e50e2;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.sign-up-text:hover {
+  text-decoration: underline;
+}
+
+.forgot-password-link {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.forgot-password-text {
+  color: #1e50e2;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-password-text:hover {
+  text-decoration: underline;
 }
 </style>

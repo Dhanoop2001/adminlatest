@@ -1,9 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+
 const routes = [
-    // Login Route
     { 
         path: '/', 
+        name: 'AdminSignup',
+        component: () => import('@/components/AdminSignup.vue') 
+    },
+    {
+        path: '/forgot-password',
+        name: 'ForgotPassword',
+        component: () => import('@/components/ForgotPassword.vue') 
+
+      },
+    // Login Route
+    { 
+        path: '/log-in', 
         name: 'LogIn',
         component: () => import('@/components/LogIn.vue') 
     },
@@ -39,9 +51,9 @@ const routes = [
     },
     // GST Page Route
     { 
-        path: '/gst-page', 
-        name: 'GstPage',
-        component: () => import('@/components/GstPage.vue') 
+        path: '/admin-gst', 
+        name: 'AdminGst',
+        component: () => import('@/components/AdminGst.vue') 
     },
     // App Charge Route
     { 

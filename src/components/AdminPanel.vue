@@ -1,36 +1,7 @@
 <template>
   <div class="admin-panel">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="logo-container">
-        <h1 class="logo">DASHPRO</h1>
-      </div>
-      
-      <div class="menu">
-        <div class="menu-item active">
-          <i class="icon dashboard-icon">◙</i>
-          <span>Dashboard</span>
-        </div>
-        <div class="menu-item" @click="navigateToParlours">
-          <i class="icon parlour-icon">✂</i>
-          <span>Admin Parlour</span>
-        </div>
-        <div class="menu-item">
-          <i class="icon offer-icon">🎁</i>
-          <span>Offers</span>
-        </div>
-        <div class="menu-item">
-          <i class="icon category-icon">📁</i>
-          <span>Categories</span>
-        </div>
-        
-        <div class="menu-item logout" @click="logout">
-          <i class="icon logout-icon">↪</i>
-          <span>Logout</span>
-        </div>
-      </div>
-    </div>
-
+    <SideBar />
+    
     <!-- Main Content -->
     <div class="main-content">
       <br>
@@ -90,10 +61,13 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import SideBar from '@/components/SideBar.vue';
 
 export default {
   name: 'AdminPanel',
+  components: {
+    SideBar
+  },
   data() {
     return {
       currentDate: new Date().toLocaleDateString(),
@@ -112,7 +86,7 @@ export default {
 
     const logout = () => {
       localStorage.removeItem('authToken'); // Remove the token
-      router.push('/login'); // Redirect to login page
+      router.push('/'); // Redirect to login page
     };
 
     return {
@@ -125,32 +99,21 @@ export default {
   },
   methods: {
     async fetchDashboardData() {
-      const token = localStorage.getItem('authToken'); // Retrieve the token
-      if (!token) {
-        console.error('No token found. User might not be logged in.');
-        this.logout(); // Redirect to login if no token
-        return;
-      }
+      // Simulating an API response with dummy data
+      const dummyData = {
+        parlourCount: 25,
+        offerCount: 10,
+        categoryCount: 5,
+        revenue: 15000,
+      };
 
-      try {
-        const response = await axios.get('http://192.168.1.200:8086/api/admin/dashboard', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        // Assuming the response contains the counts
-        this.parlourCount = response.data.parlourCount || 0;
-        this.offerCount = response.data.offerCount || 0;
-        this.categoryCount = response.data.categoryCount || 0;
-        this.revenue = response.data.revenue || 0;
-
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        // Handle error appropriately
-      }
-    }
-  }
+      // Using dummy data instead
+      this.parlourCount = dummyData.parlourCount;
+      this.offerCount = dummyData.offerCount;
+      this.categoryCount = dummyData.categoryCount;
+      this.revenue = dummyData.revenue;
+    },
+  },
 };
 </script>
 
@@ -161,60 +124,6 @@ export default {
   font-family: 'Inter', sans-serif;
   color: #333;
   background-color: #f8f9fd;
-}
-
-/* Sidebar Styles */
-.sidebar {
-  width: 260px;
-  background: linear-gradient(180deg, #4b6cb7 0%, #182848 100%);
-  color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.logo-container {
-  padding: 20px 0;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  margin: 0;
-}
-
-.menu {
-  margin-top: 30px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  margin-bottom: 5px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-
-
-.icon {
-  margin-right: 12px;
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
-}
-
-.menu-item.logout {
-  margin-top: auto;
-  color: #ff7675;
 }
 
 /* Main Content Styles */

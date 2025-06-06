@@ -1,180 +1,208 @@
 <template>
-  <div class="admin-panel-container">
-    <!-- Background animated elements -->
-    <div class="animated-shapes">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
-      <div class="circle circle-4"></div>
-    </div>
+  <div class="admin-panel">
+    <SideBar />
 
-    <!-- Sidebar Menu -->
-    <div class="sidebar">
-      <div class="brand-logo">
-        <span class="logo-icon"><i class="fas fa-spa"></i></span>
-        <h2 class="brand-name">SalonInfo</h2>
+    <div class="admin-panel-container">
+      <!-- Background animated elements -->
+      <div class="animated-shapes">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+        <div class="circle circle-4"></div>
       </div>
-      
-      <div class="menu">
-        <div class="menu-item active">
-          <i class="icon dashboard-icon">◙</i>
-          <span>Dashboard</span>
-        </div>
-        <div class="menu-item" @click="navigateToAdminPanel">
-          <i class="icon parlour-icon">✂</i>
-          <span>Admin Panel</span>
-        </div>
-        <div class="menu-item">
-          <i class="icon offer-icon">🎁</i>
-          <span>Offers</span>
-        </div>
-        <div class="menu-item">
-          <i class="icon category-icon">📁</i>
-          <span>Categories</span>
-        </div>
-        
-        <div class="menu-item logout" @click="logout">
-          <i class="icon logout-icon">↪</i>
-          <span>Logout</span>
-        </div>
-      </div>
-    </div>
 
-    <div class="main-content">
-      <div class="panel-content">
-        <!-- Header -->
-        <div class="panel-header">
-          <h1 class="page-title">Admin <span>Approval</span></h1>
-        </div>
-        
-        <!-- Tabs -->
-        <div class="tabs-container">
-          <button 
-            @click="tab = 'pending'" 
-            :class="['tab-button', { active: tab === 'pending' }]"
-          >
-            <i class="fas fa-clock"></i> Pending Requests
-          </button>
-          <button 
-            @click="tab = 'approved'" 
-            :class="['tab-button', { active: tab === 'approved' }]"
-          >
-            <i class="fas fa-check-circle"></i> Approved Requests
-          </button>
-        </div>
-        
-        <!-- Loading Indicator -->
-        <div v-if="loading" class="loading-container">
-          <div class="spinner"></div>
-        </div>
-        
-        <!-- Parlours Table -->
-        <div v-else class="table-container">
-          <div class="table-header">
-            <span v-for="header in headers" :key="header.value" class="table-header-cell">
-              {{ header.text }}
-            </span>
+      <div class="main-content">
+        <div class="panel-content">
+          <!-- Header -->
+          <div class="panel-header">
+            <h1 class="page-title">Admin <span>Approval</span></h1>
           </div>
-          
-          <div class="table-body">
-            <div v-if="(tab === 'pending' ? pendingParlours : approvedParlours).length === 0" class="empty-state">
-              <i class="fas fa-folder-open"></i>
-              <p>No {{ tab }} parlours found</p>
-            </div>
-            
-            <div 
-              v-for="item in (tab === 'pending' ? pendingParlours : approvedParlours)" 
-              :key="item.id" 
-              class="table-row"
+
+          <!-- Tabs -->
+          <div class="tabs-container">
+            <button 
+              @click="tab = 'pending'" 
+              :class="['tab-button', { active: tab === 'pending' }]"
             >
-              <span class="table-cell">{{ item.sl_no }}</span>
-              <span class="table-cell">{{ item.id }}</span>
-              <span class="table-cell">{{ item.parlourName }}</span>
-              <span class="table-cell">
-                <a href="#" @click.prevent="openLicensePopup(item.licenseNumber, item.licenseImage)">
-                  {{ item.licenseNumber }}
-                </a>
-              </span>
-              <span class="table-cell">{{ item.phoneNumber || 'N/A' }}</span>
-              <span class="table-cell email">{{ item.email }}</span>
-              <span class="table-cell">{{ item.location }}</span>
-              <span class="table-cell lat">{{ item.latitude }}</span>
-              <span class="table-cell longitude">{{ item.longitude }}</span>
-              <span class="table-cell description">{{ item.description }}</span>
-              <span class="table-cell actions">
-                <button 
-                  v-if="tab === 'pending'" 
-                  class="action-button approve" 
-                  @click="openApproveDialog(item.id)"
-                  title="Approve"
-                >
-                  <i class="fas fa-check"></i>
-                </button>
-                <button 
-                  class="action-button decline" 
-                  @click="openDeclineDialog(item.id)"
-                  title="Decline"
-                >
-                  <i class="fas fa-times"></i> <!-- Decline icon -->
-                </button>
-              </span>
+              <i class="fas fa-clock"></i> Pending Requests
+            </button>
+            <button 
+              @click="tab = 'approved'" 
+              :class="['tab-button', { active: tab === 'approved' }]"
+            >
+              <i class="fas fa-check-circle"></i> Approved Requests
+            </button>
+          </div>
+
+          <!-- Loading Indicator -->
+          <div v-if="loading" class="loading-container">
+            <div class="spinner"></div>
+          </div>
+
+          <!-- Parlours Table -->
+          <div v-else class="table-container">
+            <div class="table-header">
+              <span class="table-header-cell">S.No</span>
+              <span class="table-header-cell">ID</span>
+              <span class="table-header-cell">Parlour Name</span>
+              <span class="table-header-cell">License</span>
+              <span class="table-header-cell">Phone</span>
+              <span class="table-header-cell">Email</span>
+              <span class="table-header-cell">Details</span>
+              <span class="table-header-cell">Actions</span>
+            </div>
+
+            <div class="table-body">
+              <div v-if="(tab === 'pending' ? pendingParlours : approvedParlours).length === 0" class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>No {{ tab }} parlours found</p>
+              </div>
+
+              <div 
+                v-for="item in (tab === 'pending' ? pendingParlours : approvedParlours)" 
+                :key="item.id" 
+                class="table-row"
+              >
+                <span class="table-cell">{{ item.sl_no }}</span>
+                <span class="table-cell">{{ item.id }}</span>
+                <span class="table-cell">{{ item.parlourName }}</span>
+                <span class="table-cell">
+                  <a href="#" @click.prevent="openLicensePopup(item.licenseNumber, item.licenseImage)">
+                    {{ item.licenseNumber }}
+                  </a>
+                </span>
+                <span class="table-cell">{{ item.phoneNumber || 'N/A' }}</span>
+                <span class="table-cell email">{{ item.email }}</span>
+                <span class="table-cell">
+                  <button class="icon-button" @click="openDetailsPopup(item)" title="View Details">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </span>
+                <span class="table-cell actions">
+                  <button 
+                    v-if="tab === 'pending'" 
+                    class="action-button approve" 
+                    @click="openApproveDialog(item.id)"
+                    title="Approve"
+                  >
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button 
+                    class="action-button decline" 
+                    @click="openDeclineDialog(item.id)"
+                    title="Decline"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Approve Confirmation Dialog -->
-    <div v-if="approveDialog" class="dialog-backdrop">
-      <div class="dialog-card">
-        <div class="dialog-header">
-          <h3><i class="fas fa-check-circle"></i> Confirm Approval</h3>
-        </div>
-        <div class="dialog-body">
-          <p>Are you sure you want to approve this parlour?</p>
-        </div>
-        <div class="dialog-footer">
-          <button class="dialog-button cancel" @click="approveDialog = false">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-          <button class="dialog-button confirm" @click="confirmApprove(selectedParlourId)">
-            <i class="fas fa-check"></i> Approve
-          </button>
+      <!-- Approve Confirmation Dialog -->
+      <div v-if="approveDialog" class="dialog-backdrop">
+        <div class="dialog-card">
+          <div class="dialog-header">
+            <h3><i class="fas fa-check-circle"></i> Confirm Approval</h3>
+          </div>
+          <div class="dialog-body">
+            <p>Are you sure you want to approve this parlour?</p>
+          </div>
+          <div class="dialog-footer">
+            <button class="dialog-button cancel" @click="approveDialog = false">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="dialog-button confirm" @click="confirmApprove(selectedParlourId)">
+              <i class="fas fa-check"></i> Approve
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Decline Confirmation Dialog -->
-    <div v-if="declineDialog" class="dialog-backdrop">
-      <div class="dialog-card">
-        <div class="dialog-header">
-          <h3><i class="fas fa-exclamation-triangle"></i> Confirm Decline</h3>
-        </div>
-        <div class="dialog-body">
-          <p>Are you sure you want to decline this parlour?</p>
-        </div>
-        <div class="dialog-footer">
-          <button class="dialog-button cancel" @click="declineDialog = false">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-          <button class="dialog-button confirm" @click="confirmDecline(selectedParlourId)">
-            <i class="fas fa-check"></i> Decline
-          </button>
+      <!-- Decline Confirmation Dialog -->
+      <div v-if="declineDialog" class="dialog-backdrop">
+        <div class="dialog-card">
+          <div class="dialog-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Confirm Decline</h3>
+          </div>
+          <div class="dialog-body">
+            <p>Are you sure you want to decline this parlour?</p>
+          </div>
+          <div class="dialog-footer">
+            <button class="dialog-button cancel" @click="declineDialog = false">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+            <button class="dialog-button confirm" @click="confirmDecline(selectedParlourId)">
+              <i class="fas fa-check"></i> Decline
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- License Popup -->
-    <div v-if="licensePopup" class="popup-backdrop">
-      <div class="popup-card">
-        <div class="popup-header">
-          <h3>License Information</h3>
-          <button class="close-button" @click="licensePopup = false">✖</button>
+      <!-- License Popup -->
+      <div v-if="licensePopup" class="popup-backdrop">
+        <div class="popup-card">
+          <div class="popup-header">
+            <h3>License Information</h3>
+            <button class="close-button" @click="licensePopup = false">✖</button>
+          </div>
+          <div class="popup-body">
+            <p><strong>License Number:</strong> {{ selectedLicenseNumber }}</p>
+            <img :src="selectedImageUrl" alt="License Image" class="license-image" v-if="selectedImageUrl" />
+            <p v-else>No image available</p>
+          </div>
         </div>
-        <div class="popup-body">
-          <p><strong>License Number:</strong> {{ selectedLicenseNumber }}</p>
-          <img :src="selectedImageUrl" alt="License Image" class="license-image" v-if="selectedImageUrl" />
-          <p v-else>No image available</p>
+      </div>
+
+      <!-- Details Popup -->
+      <div v-if="detailsPopup" class="popup-backdrop">
+        <div class="popup-card details-popup">
+          <div class="popup-header">
+            <h3><i class="fas fa-info-circle"></i> Parlour Details</h3>
+            <button class="close-button" @click="detailsPopup = false">✖</button>
+          </div>
+          <div class="popup-body details-body">
+            <div v-if="selectedParlour" class="details-content">
+              <div class="detail-row">
+                <div class="detail-label">ID:</div>
+                <div class="detail-value">{{ selectedParlour.id }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Parlour Name:</div>
+                <div class="detail-value">{{ selectedParlour.parlourName }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">License Number:</div>
+                <div class="detail-value">{{ selectedParlour.licenseNumber }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Phone:</div>
+                <div class="detail-value">{{ selectedParlour.phoneNumber || 'N/A' }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Email:</div>
+                <div class="detail-value">{{ selectedParlour.email }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Location:</div>
+                <div class="detail-value">{{ selectedParlour.location }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Latitude:</div>
+                <div class="detail-value">{{ selectedParlour.latitude }}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">Longitude:</div>
+                <div class="detail-value">{{ selectedParlour.longitude }}</div>
+              </div>
+              <div class="detail-row description-row">
+                <div class="detail-label">Description:</div>
+                <div class="detail-value description">{{ selectedParlour.description }}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -183,52 +211,44 @@
 
 <script>
 import axios from "axios";
+import SideBar from '@/components/SideBar.vue';
 
 export default {
+  components: {
+    SideBar
+  },
   data() {
     return {
       tab: "pending",
       loading: false,
       parlours: [],
+      approvedParlours: [],
       approveDialog: false,
-      declineDialog: false, // Added decline dialog
+      declineDialog: false,
       licensePopup: false,
+      detailsPopup: false,
       selectedLicenseNumber: null,
       selectedImageUrl: null,
       selectedParlourId: null,
-      headers: [
-        { text: "S.No", value: "sl_no" },
-        { text: "ID", value: "id" },
-        { text: "Parlour Name", value: "parlourName" },
-        { text: "License", value: "licenseNumber" },
-        { text: "Phone", value: "phone" },
-        { text: "Email", value: "email" },
-        { text: "Location", value: "location" },
-        { text: "Latitude", value: "latitude" },
-        { text: "Longitude", value: "longitude" },
-        { text: "Description", value: "description" },
-        { text: "Actions", value: "actions" }
-      ],
+      selectedParlour: null,
       token: null,
     };
   },
   computed: {
     pendingParlours() {
       return this.parlours.filter(p => p.status === 0);
-    },
-    approvedParlours() {
-      return this.parlours.filter(p => p.status === 1);
     }
   },
   methods: {
     async fetchParlours() {
       this.loading = true;
       try {
-        const response = await axios.get("http://192.168.1.14:8086/api/admin/allRegisteredParlour", {
+        // Fetch pending parlours
+        const pendingResponse = await axios.get("http://192.168.1.2:8086/api/admin/allPendingParlour", {
           headers: { 'Authorization': `Bearer ${this.token}` }
         });
-        this.parlours = response.data.map((p, index) => ({
-          sl_no: index + 1, // Adjusted to start from 1
+        this.parlours = pendingResponse.data.map((p, index) => ({
+          sl_no: index + 1,
           id: p.id,
           parlourName: p.parlourName,
           licenseNumber: p.licenseNumber,
@@ -238,7 +258,26 @@ export default {
           latitude: p.latitude,
           longitude: p.longitude,
           description: p.description,
-          licenseImage: p.licenseImage, // Expecting Base64 string or binary data
+          licenseImage: p.licenseImage,
+          status: p.status
+        }));
+
+        // Fetch approved parlours
+        const approvedResponse = await axios.get("http://192.168.1.2:8086/api/admin/allRegisteredParlour", {
+          headers: { 'Authorization': `Bearer ${this.token}` }
+        });
+        this.approvedParlours = approvedResponse.data.map((p, index) => ({
+          sl_no: index + 1,
+          id: p.id,
+          parlourName: p.parlourName,
+          licenseNumber: p.licenseNumber,
+          phoneNumber: p.phoneNumber || 'N/A',
+          email: p.email,
+          location: p.location,
+          latitude: p.latitude,
+          longitude: p.longitude,
+          description: p.description,
+          licenseImage: p.licenseImage,
           status: p.status
         }));
       } catch (error) {
@@ -250,9 +289,6 @@ export default {
         this.loading = false;
       }
     },
-    navigateToAdminPanel() {
-      this.$router.push({ name: 'AdminPanel' });
-    },
     openApproveDialog(id) {
       this.selectedParlourId = id;
       this.approveDialog = true;
@@ -261,7 +297,7 @@ export default {
       if (!id) return;
       try {
         await axios.put(
-          `http://192.168.1.14:8086/api/admin/approve?id=${id}&status=1`,
+          `http://192.168.1.2:8086/api/admin/approve?id=${id}&status=1`,
           {},
           { headers: { 'Authorization': `Bearer ${this.token}` } }
         );
@@ -279,26 +315,21 @@ export default {
       if (!id) return;
       try {
         await axios.delete(
-          `http://192.168.1.14:8086/api/admin/parlour/delete?id=${id}`, // Adjust the endpoint as necessary
-          
+          `http://192.168.1.2:8086/api/admin/parlour/delete?id=${id}`,
           { headers: { 'Authorization': `Bearer ${this.token}` } }
         );
         this.fetchParlours();
-        this.declineDialog = false; // Close the dialog after confirming
+        this.declineDialog = false;
       } catch (error) {
         console.error("Error declining parlour:", error);
       }
     },
     openLicensePopup(licenseNumber, licenseImage) {
       this.selectedLicenseNumber = licenseNumber;
-      
-      // Handle the licenseImage
       if (licenseImage) {
         if (licenseImage.startsWith('data:image/')) {
-          // If it's already a Base64 string with a data URI prefix
           this.selectedImageUrl = licenseImage;
         } else {
-          // If it's a plain Base64 string or binary data, assume it's JPEG and add the prefix
           try {
             const base64String = typeof licenseImage === 'string' ? licenseImage : this.binaryToBase64(licenseImage);
             this.selectedImageUrl = `data:image/jpeg;base64,${base64String}`;
@@ -310,11 +341,13 @@ export default {
       } else {
         this.selectedImageUrl = null;
       }
-      
       this.licensePopup = true;
     },
+    openDetailsPopup(parlour) {
+      this.selectedParlour = parlour;
+      this.detailsPopup = true;
+    },
     binaryToBase64(binaryData) {
-      // Convert binary data to Base64
       const binaryArray = new Uint8Array(binaryData);
       let binaryString = '';
       for (let i = 0; i < binaryArray.length; i++) {
@@ -324,7 +357,7 @@ export default {
     },
     logout() {
       sessionStorage.removeItem('admin_token');
-      this.$router.push({ name: 'Login' }); // Adjust the route name as per your router configuration
+      this.$router.push({ name: 'Login' });
     }
   },
   mounted() {
@@ -332,7 +365,7 @@ export default {
     if (this.token) {
       this.fetchParlours();
     } else {
-      this.$router.push({ name: 'Login' }); // Redirect to login if no token
+      this.$router.push({ name: 'Login' });
     }
   }
 };
@@ -348,10 +381,16 @@ export default {
   padding: 0;
 }
 
+.admin-panel {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+}
+
 .admin-panel-container {
+  flex-grow: 1;
   min-height: 100vh;
   width: 100%;
-  font-family: 'Montserrat', sans-serif;
   background-color: #0a2463;
   position: relative;
   overflow: hidden;
@@ -423,93 +462,6 @@ export default {
   }
 }
 
-/* Sidebar styles */
-.sidebar {
-  width: 280px;
-  background: linear-gradient(to bottom, #1e3c72, #2a5298);
-  height: 100vh;
-  position: sticky;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
-  padding: 2rem 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar .brand-logo {
-  display: flex;
-  align-items: center;
-  padding: 0 1.5rem;
-  margin-bottom: 3rem;
-}
-
-.sidebar .brand-logo .logo-icon {
-  background: white;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  margin-right: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar .brand-logo .logo-icon i {
-  font-size: 24px;
-  color: #1e3c72;
-}
-
-.sidebar .brand-logo .brand-name {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  margin-bottom: 0.5rem;
-}
-
-.menu-item .icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  margin-right: 1rem;
-}
-
-.menu-item span {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.menu-item.logout {
-  margin-top: auto;
-  color: #ff6b6b;
-}
-
-.menu-item.logout:hover {
-  background: rgba(255, 107, 107, 0.2);
-}
-
-/* Main content area */
 .main-content {
   flex: 1;
   padding: 2rem;
@@ -517,7 +469,6 @@ export default {
   height: 100vh;
 }
 
-/* Panel content */
 .panel-content {
   padding: 2rem;
   background: white;
@@ -542,7 +493,6 @@ export default {
   color: #1e50e2;
 }
 
-/* Tabs styling */
 .tabs-container {
   display: flex;
   margin-bottom: 2rem;
@@ -575,7 +525,6 @@ export default {
   box-shadow: 0 4px 15px rgba(30, 80, 226, 0.2);
 }
 
-/* Loading indicator */
 .loading-container {
   display: flex;
   justify-content: center;
@@ -597,7 +546,6 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
-/* Table styling */
 .table-container {
   background: white;
   border-radius: 15px;
@@ -608,7 +556,7 @@ export default {
 
 .table-header {
   display: grid;
-  grid-template-columns: 80px 100px repeat(5, 1fr) 120px 120px 1.5fr 1fr;
+  grid-template-columns: 80px 100px 1fr 1fr 1fr 1fr 100px 140px;
   background: linear-gradient(to right, #1e50e2, #0a2463);
   color: white;
   font-weight: 600;
@@ -632,7 +580,7 @@ export default {
 
 .table-row {
   display: grid;
-  grid-template-columns: 80px 100px repeat(5, 1fr) 120px 120px 1.5fr 1fr;
+  grid-template-columns: 80px 100px 1fr 1fr 1fr 1fr 100px 140px;
   border-bottom: 1px solid #eee;
   transition: background-color 0.2s;
   align-items: center;
@@ -658,60 +606,75 @@ export default {
   white-space: normal;
 }
 
-.table-cell.description {
-  white-space: normal;
-  line-height: 1.5;
-  max-height: 100px;
-  overflow-y: auto;
-}
-
 .table-cell.actions {
   display: flex;
-  gap: 15px; /* Adjust the gap between buttons */
+  gap: 10px;
   justify-content: flex-start;
 }
 
 .action-button {
   display: inline-flex;
   border: none;
-  border-radius: 20px; /* Rounded corners for elliptical shape */
-  padding: 0.5rem 1rem; /* Add padding for a more elongated shape */
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .action-button.approve {
-  background: linear-gradient(to right, #36d1dc, #5b86e5); /* Gradient background */
+  background: linear-gradient(to right, #36d1dc, #5b86e5);
   color: white;
 }
 
 .action-button.approve:hover {
-  background: linear-gradient(to right, #32c3cd, #4e75d9); /* Darker gradient on hover */
-  transform: translateY(-2px); /* Lift effect on hover */
+  background: linear-gradient(to right, #32c3cd, #4e75d9);
+  transform: translateY(-2px);
 }
 
 .action-button.decline {
-  background: linear-gradient(to right, #ff416c, #ff4b2b); /* Gradient background */
+  background: linear-gradient(to right, #ff416c, #ff4b2b);
   color: white;
 }
 
 .action-button.decline:hover {
-  background: linear-gradient(to right, #f13b63, #f44426); /* Darker gradient on hover */
-  transform: translateY(-2px); /* Lift effect on hover */
+  background: linear-gradient(to right, #f13b63, #f44426);
+  transform: translateY(-2px);
 }
 
-/* Icon styles */
 .action-button i {
-  font-size: 1.2rem; /* Increase icon size */
-  transition: transform 0.3s ease; /* Smooth transition for icon */
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
 }
 
 .action-button:hover i {
-  transform: scale(1.1); /* Slightly enlarge icon on hover */
+  transform: scale(1.1);
 }
 
-/* Empty state */
+.icon-button {
+  background: linear-gradient(to right, #3a7bd5, #00d2ff);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(58, 123, 213, 0.3);
+}
+
+.icon-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(58, 123, 213, 0.4);
+}
+
+.icon-button i {
+  font-size: 1.1rem;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -730,19 +693,18 @@ export default {
   font-size: 1.2rem;
 }
 
-/* Dialog styling */
 .dialog-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7); /* Darker backdrop for a more premium feel */
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  backdrop-filter: blur(10px); /* Added blur effect for depth */
+  backdrop-filter: blur(10px);
 }
 
 .dialog-card {
@@ -750,21 +712,31 @@ export default {
   background: white;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Softer shadow for a premium look */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
   animation: dialog-appear 0.3s ease;
-  transition: transform 0.3s ease; /* Smooth scaling effect */
+  transition: transform 0.3s ease;
+}
+
+@keyframes dialog-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .dialog-card:hover {
-  transform: scale(1.02); /* Slight scale on hover for interactivity */
+  transform: scale(1.02);
 }
 
 .dialog-header {
   background: linear-gradient(to right, #1e50e2, #0a2463);
   color: white;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border for separation */
-  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dialog-header h3 {
@@ -783,7 +755,7 @@ export default {
   padding: 2rem 1.5rem;
   text-align: center;
   font-size: 1.1rem;
-  color: #333; /* Darker text for better readability */
+  color: #333;
 }
 
 .dialog-footer {
@@ -814,7 +786,7 @@ export default {
 .dialog-button.cancel {
   background: #f1f3f5;
   color: #555;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .dialog-button.cancel:hover {
@@ -824,7 +796,7 @@ export default {
 .dialog-button.confirm {
   background: linear-gradient(to right, #36d1dc, #5b86e5);
   color: white;
-  box-shadow: 0 2px 5px rgba(54, 209, 220, 0.3); /* Soft shadow for depth */
+  box-shadow: 0 2px 5px rgba(54, 209, 220, 0.3);
 }
 
 .dialog-button.confirm:hover {
@@ -832,7 +804,6 @@ export default {
   box-shadow: 0 4px 10px rgba(91, 134, 229, 0.3);
 }
 
-/* License Popup styling */
 .popup-backdrop {
   position: fixed;
   top: 0;
@@ -844,7 +815,7 @@ export default {
   align-items: center;
   justify-content: center;
   z-index: 200;
-  backdrop-filter: blur(10px); /* Added blur effect for depth */
+  backdrop-filter: blur(10px);
 }
 
 .popup-card {
@@ -852,12 +823,12 @@ export default {
   border-radius: 20px;
   padding: 2rem;
   width: 400px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Softer shadow for a premium look */
-  transition: transform 0.3s ease; /* Smooth scaling effect */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
 .popup-card:hover {
-  transform: scale(1.02); /* Slight scale on hover for interactivity */
+  transform: scale(1.02);
 }
 
 .popup-header {
@@ -869,15 +840,15 @@ export default {
 .popup-body {
   margin-top: 1rem;
   text-align: center;
-  color: #333; /* Darker text for better readability */
+  color: #333;
 }
 
 .license-image {
   max-width: 100%;
   height: auto;
   margin-top: 1rem;
-  border-radius: 10px; /* Rounded corners for the image */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .close-button {
@@ -885,11 +856,333 @@ export default {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #1e50e2; /* Color to match the theme */
+  color: #1e50e2;
   transition: color 0.3s;
 }
 
 .close-button:hover {
-  color: #0a2463; /* Darker shade on hover */
+  color: #0a2463;
+}
+
+/* Details popup specific styles */
+.details-popup {
+  width: 600px;
+  max-width: 90vw;
+}
+
+.details-body {
+  text-align: left;
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-row {
+  display: flex;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-label {
+  width: 150px;
+  font-weight: 600;
+  color: #555;
+}
+
+.detail-value {
+  flex: 1;
+  color: #333;
+}
+
+.description-row {
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-value.description {
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+@media (max-width: 1200px) {
+  .table-header, .table-row {
+    grid-template-columns: 60px 80px 1fr 1fr 1fr 1fr 80px 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-header, .table-row {
+    grid-template-columns: 60px 80px 1fr 1fr 100px;
+  }
+  
+  .table-header-cell:nth-child(5),
+  .table-header-cell:nth-child(6),
+  .table-cell:nth-child(5),
+  .table-cell:nth-child(6) {
+    display: none;
+  }
+  
+  .panel-content {
+    padding: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .tab-button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .action-button {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .dialog-card, .popup-card {
+    width: 90%;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 576px) {
+  .table-header, .table-row {
+    grid-template-columns: 60px 1fr 80px 100px;
+  }
+  
+  .table-header-cell:nth-child(2),
+  .table-cell:nth-child(2),
+  .table-header-cell:nth-child(4),
+  .table-cell:nth-child(4) {
+    display: none;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .panel-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .tabs-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .tab-button {
+    border-radius: 8px;
+  }
+  
+  .dialog-footer {
+    flex-direction: column;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .detail-label {
+    width: 100%;
+  }
+}
+
+/* Add some smooth transitions for better UX */
+.table-row, .table-cell, .tab-button, .action-button, .icon-button {
+  transition: all 0.3s ease;
+}
+
+/* Enhanced hover states */
+.table-row:hover {
+  background-color: #f0f5ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(30, 80, 226, 0.1);
+}
+
+/* Better form inputs for future expansion */
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #1e50e2;
+  box-shadow: 0 0 0 3px rgba(30, 80, 226, 0.1);
+}
+
+/* Improved scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Add subtle animations for popups */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.popup-card, .dialog-card {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Pulsating notification for new items (future feature) */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(30, 80, 226, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(30, 80, 226, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(30, 80, 226, 0);
+  }
+}
+
+.new-item {
+  position: relative;
+}
+
+.new-item::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  background-color: #1e50e2;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Improved loading animation */
+@keyframes spin-glow {
+  0% {
+    transform: rotate(0deg);
+    box-shadow: 0 0 5px rgba(30, 80, 226, 0.3);
+  }
+  50% {
+    transform: rotate(180deg);
+    box-shadow: 0 0 15px rgba(30, 80, 226, 0.6);
+  }
+  100% {
+    transform: rotate(360deg);
+    box-shadow: 0 0 5px rgba(30, 80, 226, 0.3);
+  }
+}
+
+.spinner {
+  animation: spin-glow 1.2s linear infinite;
+}
+
+/* Print styles for reports */
+@media print {
+  .admin-panel {
+    display: block;
+  }
+  
+  .tabs-container, .animated-shapes, .action-button, .icon-button {
+    display: none !important;
+  }
+  
+  .panel-content {
+    padding: 0;
+    box-shadow: none;
+  }
+  
+  .table-row {
+    page-break-inside: avoid;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table-cell {
+    color: #000;
+  }
+  
+  .table-header {
+    background: #eee !important;
+    color: #000 !important;
+  }
+  
+  body {
+    background: white !important;
+  }
+}
+
+/* Dark mode support (for future implementation) */
+.dark-mode {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: #f0f0f0;
+  --border-color: #333;
+  --highlight-color: #2f6bff;
+}
+
+.dark-mode .panel-content {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+.dark-mode .table-row {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dark-mode .table-row:hover {
+  background-color: #2a2a2a;
+}
+
+/* Accessibility improvements */
+.icon-button:focus, .action-button:focus, .tab-button:focus {
+  outline: 2px solid #4d90fe;
+  outline-offset: 2px;
+}
+
+/* Skip to content for keyboard users */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background-color: white;
+  color: #0a2463;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 10px;
 }
 </style>
