@@ -2,84 +2,107 @@
   <div class="admin-login-container">
     <div class="login-backdrop">
       <div class="floating-elements">
-        <div class="floating-shape shape-1" aria-hidden="true"></div>
-        <div class="floating-shape shape-2" aria-hidden="true"></div>
-        <div class="floating-shape shape-3" aria-hidden="true"></div>
-        <div class="floating-shape shape-4" aria-hidden="true"></div>
-        <div class="floating-shape shape-5" aria-hidden="true"></div>
-        <div class="floating-shape shape-6" aria-hidden="true"></div>
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
       </div>
       
       <div class="login-card">
         <div class="brand-section">
           <div class="brand-decoration">
-            <div class="decoration-circle circle-1" aria-hidden="true"></div>
-            <div class="decoration-circle circle-2" aria-hidden="true"></div>
-            <div class="decoration-circle circle-3" aria-hidden="true"></div>
+            <div class="decoration-circle circle-1"></div>
+            <div class="decoration-circle circle-2"></div>
+            <div class="decoration-circle circle-3"></div>
           </div>
           
-          <div class="brand-logo" aria-label="SalonInfo logo">
+          <div class="brand-logo">
             <span class="logo-icon"><i class="fas fa-spa"></i></span>
           </div>
           <h1 class="brand-name">SalonInfo</h1>
-          <div class="brand-divider" aria-hidden="true"></div>
+          <div class="brand-divider"></div>
           <p class="brand-tagline">Elevating Beauty Management</p>
         </div>
         
         <div class="login-form-section">
           <div class="login-header">
-            <h2>Welcome Back</h2>
-            <p>Please sign in to your administrator account</p>
+            <h2>Change Password</h2>
+            <p>Enter your new password below</p>
           </div>
           
-          <form @submit.prevent="login" class="login-form">
+          <form @submit.prevent="changePassword" class="login-form">
             <div class="form-group">
-              <label for="email">Email Address</label>
+              <label for="current-password">Current Password</label>
               <div class="input-wrapper">
-                <span class="input-icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
-                <input 
-                  type="email" 
-                  id="email" 
-                  v-model="email" 
-                  placeholder="Enter your email address"
-                  @keyup.enter="login"
-                  :class="{ 'error': errors.email }"
-                  aria-describedby="email-error"
-                />
-              </div>
-              <transition name="error-fade">
-                <p v-if="errors.email" id="email-error" class="error-message" role="alert">
-                  {{ errors.email }}
-                </p>
-              </transition>
-            </div>
-            
-            <div class="form-group">
-              <label for="password">Password</label>
-              <div class="input-wrapper">
-                <span class="input-icon" aria-hidden="true"><i class="fas fa-lock"></i></span>
-                <input 
-                  :type="showPassword ? 'text' : 'password'" 
-                  id="password" 
-                  v-model="password" 
-                  placeholder="Enter your password"
-                  @keyup.enter="login"
-                  :class="{ 'error': errors.password }"
-                  aria-describedby="password-error"
+                <span class="input-icon"><i class="fas fa-lock"></i></span>
+                <input
+                  :type="showCurrentPassword ? 'text' : 'password'"
+                  id="current-password"
+                  v-model="currentPassword"
+                  placeholder="Enter your current password"
+                  @keyup.enter="changePassword"
+                  :class="{ 'error': errors.currentPassword }"
                 />
                 <button 
                   type="button" 
                   class="visibility-toggle" 
-                  @click="showPassword = !showPassword"
-                  aria-label="Toggle password visibility"
+                  @click="toggleCurrentPasswordVisibility"
                 >
-                  <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                  <i :class="showCurrentPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
               </div>
               <transition name="error-fade">
-                <p v-if="errors.password" id="password-error" class="error-message" role="alert">
-                  {{ errors.password }}
-                </p>
+                <p v-if="errors.currentPassword" class="error-message">{{ errors.currentPassword }}</p>
+              </transition>
+            </div>
+            
+            <div class="form-group">
+              <label for="new-password">New Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon"><i class="fas fa-lock"></i></span>
+                <input
+                  :type="showNewPassword ? 'text' : 'password'"
+                  id="new-password"
+                  v-model="newPassword"
+                  placeholder="Enter your new password"
+                  @keyup.enter="changePassword"
+                  :class="{ 'error': errors.newPassword }"
+                />
+                <button 
+                  type="button" 
+                  class="visibility-toggle" 
+                  @click="toggleNewPasswordVisibility"
+                >
+                  <i :class="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+              <transition name="error-fade">
+                <p v-if="errors.newPassword" class="error-message">{{ errors.newPassword }}</p>
+              </transition>
+            </div>
+            
+            <div class="form-group">
+              <label for="confirm-password">Confirm New Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon"><i class="fas fa-lock"></i></span>
+                <input
+                  :type="showConfirmPassword ? 'text' : 'password'"
+                  id="confirm-password"
+                  v-model="confirmPassword"
+                  placeholder="Confirm your new password"
+                  @keyup.enter="changePassword"
+                  :class="{ 'error': errors.confirmPassword }"
+                />
+                <button 
+                  type="button" 
+                  class="visibility-toggle" 
+                  @click="toggleConfirmPasswordVisibility"
+                >
+                  <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+              <transition name="error-fade">
+                <p v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</p>
               </transition>
             </div>
             
@@ -87,24 +110,37 @@
               type="submit"
               class="login-button" 
               :disabled="isLoading"
-              aria-label="Sign in to administrator account"
             >
               <span v-if="!isLoading" class="button-content">
-                <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
-                Sign In
+                <i class="fas fa-key"></i>
+                Change Password
               </span>
               <div v-else class="button-loader">
-                <div class="spinner" aria-hidden="true"></div>
-                <span>Signing In...</span>
+                <div class="spinner"></div>
+                <span>Processing...</span>
               </div>
             </button>
             
             <transition name="error-slide">
-              <div v-if="loginError" class="error-alert" role="alert">
-                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                <span>{{ loginError }}</span>
+              <div v-if="errorMessage" class="error-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>{{ errorMessage }}</span>
               </div>
             </transition>
+            
+            <transition name="error-slide">
+              <div v-if="successMessage" class="success-alert">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ successMessage }}</span>
+              </div>
+            </transition>
+
+            <div class="additional-links">
+              <router-link to="/" class="change-password-link">
+                <i class="fas fa-sign-in-alt"></i>
+                Back to Sign In
+              </router-link>
+            </div>
           </form>
         </div>
       </div>
@@ -116,79 +152,100 @@
 import axios from 'axios';
 
 export default {
-  name: 'AdminLogin',
+  name: 'ChangePassword',
   data() {
     return {
-      email: '',
-      password: '',
-      showPassword: false,
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
       isLoading: false,
-      loginError: '',
+      errorMessage: '',
+      successMessage: '',
+      showCurrentPassword: false,
+      showNewPassword: false,
+      showConfirmPassword: false,
       errors: {
-        email: '',
-        password: ''
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
       }
-    }
+    };
   },
   methods: {
     validateForm() {
-      this.errors = { email: '', password: '' };
+      this.errors = { currentPassword: '', newPassword: '', confirmPassword: '' };
+      this.errorMessage = '';
       let isValid = true;
-      
-      // Email validation
-      if (!this.email) {
-        this.errors.email = 'Email address is required';
-        isValid = false;
-      } else if (!/^\S+@\S+\.\S+$/.test(this.email)) {
-        this.errors.email = 'Please enter a valid email address';
+
+      // Current Password validation
+      if (!this.currentPassword) {
+        this.errors.currentPassword = 'Current password is required';
         isValid = false;
       }
-      
-      // Password validation
-      if (!this.password) {
-        this.errors.password = 'Password is required';
+
+      // New Password validation
+      if (!this.newPassword) {
+        this.errors.newPassword = 'New password is required';
         isValid = false;
-      } else if (this.password.length < 8) {
-        this.errors.password = 'Password must be at least 8 characters long';
+      } else if (this.newPassword.length < 8) {
+        this.errors.newPassword = 'New password must be at least 8 characters long';
         isValid = false;
       }
-      
+
+      // Confirm Password validation
+      if (!this.confirmPassword) {
+        this.errors.confirmPassword = 'Please confirm your new password';
+        isValid = false;
+      } else if (this.newPassword !== this.confirmPassword) {
+        this.errors.confirmPassword = 'Passwords do not match';
+        isValid = false;
+      }
+
       return isValid;
     },
-    
-    async login() {
+    toggleCurrentPasswordVisibility() {
+      this.showCurrentPassword = !this.showCurrentPassword;
+    },
+    toggleNewPasswordVisibility() {
+      this.showNewPassword = !this.showNewPassword;
+    },
+    toggleConfirmPasswordVisibility() {
+      this.showConfirmPassword = !this.showConfirmPassword;
+    },
+    async changePassword() {
       if (!this.validateForm()) return;
 
+      this.errorMessage = '';
+      this.successMessage = '';
       this.isLoading = true;
-      this.loginError = '';
 
       try {
-        const response = await axios.post('http://192.168.1.19:8086/api/admin/AdminLogin', {
-          email: this.email,
-          password: this.password
+        const response = await axios.post('http://192.168.1.7:8086/api/admin/change-password', {
+          currentPassword: this.currentPassword,
+          newPassword: this.newPassword
         }, {
-          headers: { 
+          headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        const token = response.data;
-        sessionStorage.setItem('admin_token', token);
-        this.$router.push('/admin-panel');
-
+        this.successMessage = response.data.message || 'Password changed successfully.';
+        this.currentPassword = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
       } catch (error) {
-        console.error('Login error:', error);
+        console.error('Password change error:', error);
         if (error.response && error.response.data) {
-          this.loginError = error.response.data.message || 'Login failed. Please check your credentials.';
+          this.errorMessage = error.response.data.message || 'Failed to change password. Please try again.';
         } else {
-          this.loginError = 'Network error. Please try again later.';
+          this.errorMessage = 'Network error. Please try again later.';
         }
       } finally {
         this.isLoading = false;
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -206,6 +263,7 @@ export default {
   --text-light: #8D6E63;
   --white: #FFFFFF;
   --error: #D32F2F;
+  --success: #2E7D32;
   --shadow-light: rgba(44, 24, 16, 0.08);
   --shadow-medium: rgba(44, 24, 16, 0.15);
   --shadow-heavy: rgba(44, 24, 16, 0.25);
@@ -283,22 +341,6 @@ export default {
   bottom: 30%;
   left: 5%;
   animation-delay: -24s;
-}
-
-.shape-5 {
-  width: 300px;
-  height: 300px;
-  top: 60%;
-  left: 20%;
-  animation-delay: -12s;
-}
-
-.shape-6 {
-  width: 220px;
-  height: 220px;
-  bottom: 10%;
-  right: 15%;
-  animation-delay: -20s;
 }
 
 @keyframes float {
@@ -694,6 +736,45 @@ export default {
   font-weight: 500;
 }
 
+.success-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(46, 125, 50, 0.08);
+  color: var(--success);
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--success);
+  font-weight: 500;
+}
+
+.additional-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.change-password-link {
+  color: var(--primary-brown);
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-size: 15px;
+}
+
+.change-password-link:hover {
+  background: rgba(147, 111, 90, 0.1);
+  color: var(--secondary-brown);
+  transform: translateY(-1px);
+}
+
+/* Animations */
 .error-fade-enter-active, .error-fade-leave-active {
   transition: all 0.3s ease;
 }
@@ -712,6 +793,7 @@ export default {
   transform: translateY(-20px);
 }
 
+/* Responsive Design */
 @media (max-width: 1024px) {
   .login-card {
     width: 90%;
